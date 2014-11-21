@@ -15,10 +15,10 @@ RUN ipython profile create
 
 # Workaround for issue with ADD permissions
 USER root
-ADD demo/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
+ADD ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
 
 # Fake Google Analytics directory (for now)
-ADD demo/ga/ /srv/ga/
+ADD ga/ /srv/ga/
 RUN chmod a+rX /srv/ga
 RUN chown jovyan:jovyan /home/jovyan -R
 
