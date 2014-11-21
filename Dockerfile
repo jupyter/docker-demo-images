@@ -36,16 +36,15 @@ RUN ipython profile create
 
 # Workaround for issue with ADD permissions
 USER root
-ADD ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
+ADD common/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
 
 # All the additions to give to the created user.
-ADD Julia/ /srv/Julia/
-ADD R/ /srv/R/
+ADD kernels/Julia/ /srv/Julia/
+ADD kernels/R/ /srv/R/
 ADD notebooks/ /home/jovyan/
 
 # Add Google Analytics templates
-ADD ga/ /srv/ga/
-ADD static/ipynblogo.png /srv/ipython/IPython/html/static/base/images/ipynblogo.png
+ADD common/ga/ /srv/ga/
 
 RUN chmod a+rX /srv/R/ -R
 RUN chown jovyan:jovyan /home/jovyan -R
