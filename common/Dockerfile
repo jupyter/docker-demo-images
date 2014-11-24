@@ -30,3 +30,5 @@ ENV SHELL /bin/bash
 ENV USER jovyan
 
 WORKDIR /home/jovyan/
+
+CMD ipython3 notebook
