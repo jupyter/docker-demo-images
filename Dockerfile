@@ -77,7 +77,7 @@ RUN mkdir /home/jovyan/.R/
 RUN echo "install.packages(c('RCurl', 'devtools'))" | R --no-save
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
 
-#RUN cat /srv/R/install_kernel.R | R --no-save
+RUN cat /srv/R/install_kernel.R | R --no-save
 
 # Example notebooks 
 RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
