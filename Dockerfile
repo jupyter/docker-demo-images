@@ -70,11 +70,14 @@ RUN cp /srv/Julia/kernel.json /home/jovyan/.ipython/kernels/julia/kernel.json
 # R installation
 # Copying files instead of adding due to current permissions issue with ADD
 RUN cp /srv/R/Renviron /home/jovyan/.Renviron
-RUN cp /srv/R/Rprofile /home/jovyan/.Rprofile
+RUN echo 'R_LIBS_USER=~/.R:/usr/lib/R/site-library' > /home/jovyan/.Renviron
+RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/jovyan/.Rprofile
 RUN mkdir /home/jovyan/.R/
 
-RUN cat /srv/R/install_kernel.R | R --no-save
-RUN cat /srv/R/install_pkgs.R   | R --no-save
+RUN echo "install.packages(c('RCurl', 'devtools'))" | R --no-save
+
+#RUN cat /srv/R/install_kernel.R | R --no-save
+#RUN cat /srv/R/install_pkgs.R   | R --no-save
 
 # Example notebooks 
 RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
