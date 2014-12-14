@@ -3,7 +3,7 @@ install.packages('devtools')
 
 library(devtools)
 
-install_github('armstrtw/rzmq', pull=14, ref=NULL)
+install_github('armstrtw/rzmq', pull=14)
 install_github('takluyver/IRdisplay')
 install_github('takluyver/IRkernel')
 
