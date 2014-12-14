@@ -74,6 +74,7 @@ WORKDIR /home/jovyan/
 # Install Julia kernel
 RUN mkdir -p /home/jovyan/.ipython/kernels/julia/
 RUN cp /srv/Julia/kernel.json /home/jovyan/.ipython/kernels/julia/kernel.json
+RUN cp /srv/Julia/logo-64x64.png /home/jovyan/.ipython/kernels/julia/logo-64x64.png
 
 # Example notebooks 
 RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
