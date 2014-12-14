@@ -58,13 +58,11 @@ ADD common/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
 
 # All the additions to give to the created user.
 ADD kernels/Julia/ /srv/Julia/
-ADD kernels/R/ /srv/R/
 ADD notebooks/ /home/jovyan/
 
 # Add Google Analytics templates
 ADD common/ga/ /srv/ga/
 
-RUN chmod a+rX /srv/R/ -R
 RUN chown jovyan:jovyan /home/jovyan -R
 
 ## Final actions for user
