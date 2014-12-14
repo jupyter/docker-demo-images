@@ -32,6 +32,10 @@ EXPOSE 8888
 RUN useradd -m -s /bin/bash jovyan
 
 USER jovyan
+ENV HOME /home/jovyan
+ENV SHELL /bin/bash
+ENV USER jovyan
+
 RUN ipython profile create
 
 # IJulia installation
@@ -41,10 +45,12 @@ RUN julia -e 'Pkg.add("Gadfly")'
 RUN julia -e 'Pkg.add("RDatasets")'
 
 # R installation
-RUN echo 'R_LIBS_USER=~/.R:/usr/lib/R/site-library' > /home/jovyan/.Renviron
+RUN echo 'R_LIBS_USER=/home/jovyan/.R:/usr/lib/R/site-library' > /home/jovyan/.Renviron
 RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/jovyan/.Rprofile
 RUN mkdir /home/jovyan/.R/
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
+RUN echo "install.packages(c('RCurl', 'devtools'))" | R --no-save
+RUN echo "library(devtools); install_github('rgbkrk/rzmq', ref='c++11'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
 
 # Workaround for issue with ADD permissions
 USER root
@@ -64,18 +70,12 @@ RUN chown jovyan:jovyan /home/jovyan -R
 ## Final actions for user
 
 USER jovyan
-ENV HOME /home/jovyan
-ENV SHELL /bin/bash
-ENV USER jovyan
 
 WORKDIR /home/jovyan/
 
 # Install Julia kernel
 RUN mkdir -p /home/jovyan/.ipython/kernels/julia/
 RUN cp /srv/Julia/kernel.json /home/jovyan/.ipython/kernels/julia/kernel.json
-
-# Install R kernel
-RUN cat /srv/R/install_kernel.R | R --no-save
 
 # Example notebooks 
 RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
