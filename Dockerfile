@@ -49,7 +49,7 @@ RUN echo 'R_LIBS_USER=/home/jovyan/.R:/usr/lib/R/site-library' > /home/jovyan/.R
 RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/jovyan/.Rprofile
 RUN mkdir /home/jovyan/.R/
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
-RUN echo "install.packages(c('RCurl', 'devtools'))" | R --no-save
+RUN echo "install.packages(c('RCurl', 'devtools', 'dplyr'))" | R --no-save
 RUN echo "library(devtools); install_github('rgbkrk/rzmq', ref='c++11'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
 
 # Workaround for issue with ADD permissions
