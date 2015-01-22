@@ -17,5 +17,8 @@ c.NotebookApp.trust_xheaders = True
 # uses.
 c.NotebookApp.tornado_settings = {
     'template_path':['/srv/ga/', '/srv/ipython/IPython/html',
-                     '/srv/ipython/IPython/html/templates']
+                     '/srv/ipython/IPython/html/templates'],
+    'headers': {
+        'Content-Security-Policy': "frame-ancestors 'self' https://*.jupyter.org https://jupyter.github.io https://*.tmpnb.org"
+    }
 }
