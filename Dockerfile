@@ -63,7 +63,7 @@ ADD common/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
 # All the additions to give to the created user.
 ADD kernels/Julia/ /srv/Julia/
 ADD notebooks/ /home/jovyan/
-ADD https://github.com/jupyter/strata-sv-2015-tutorial.git /home/jovyan/communities/strata-sv-2015-tutorial/
+RUN git clone https://github.com/jupyter/strata-sv-2015-tutorial.git /home/jovyan/communities/strata-sv-2015-tutorial/
 
 # Add Google Analytics templates
 ADD common/ga/ /srv/ga/
