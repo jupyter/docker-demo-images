@@ -31,6 +31,7 @@ RUN apt-get install software-properties-common python-software-properties -y && 
 
 EXPOSE 8888
 
+# We run our docker images with a non-root user as a security precaution.
 # jovyan is our user
 RUN useradd -m -s /bin/bash jovyan
 
