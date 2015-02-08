@@ -41,6 +41,8 @@ ENV SHELL /bin/bash
 ENV USER jovyan
 
 RUN ipython profile create
+RUN mkdir /home/jovyan/communities
+RUN mkdir /home/jovyan/featured
 
 # IJulia installation
 RUN julia -e 'Pkg.add("IJulia")'
