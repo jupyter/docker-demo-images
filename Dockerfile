@@ -88,6 +88,4 @@ RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
 
 RUN chown -R jovyan:jovyan /home/jovyan
 
-RUN find . -name '*.ipynb' -exec ipython trust {} \;
-
 CMD ipython3 notebook
