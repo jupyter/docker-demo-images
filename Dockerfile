@@ -41,6 +41,8 @@ ENV SHELL /bin/bash
 ENV USER jovyan
 
 RUN ipython profile create
+RUN mkdir /home/jovyan/communities
+RUN mkdir /home/jovyan/featured
 
 # IJulia installation
 RUN julia -e 'Pkg.add("IJulia")'
@@ -64,6 +66,7 @@ ADD common/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
 # All the additions to give to the created user.
 ADD kernels/Julia/ /srv/Julia/
 ADD notebooks/ /home/jovyan/
+RUN git clone --depth 1 https://github.com/jupyter/strata-sv-2015-tutorial.git /home/jovyan/featured/strata-sv-2015-tutorial/
 
 # Add Google Analytics templates
 ADD common/ga/ /srv/ga/
@@ -85,7 +88,5 @@ RUN cp /srv/Julia/logo-64x64.png /home/jovyan/.ipython/kernels/julia/logo-64x64.
 RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
 
 RUN chown -R jovyan:jovyan /home/jovyan
-
-RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
 CMD ipython3 notebook
