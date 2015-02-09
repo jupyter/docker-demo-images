@@ -49,9 +49,10 @@ RUN julia -e 'Pkg.add("Gadfly")'
 RUN julia -e 'Pkg.add("RDatasets")'
 
 # R installation
+RUN mkdir /home/jovyan/.R/
 RUN echo 'R_LIBS_USER=/home/jovyan/.R:/usr/lib/R/site-library' > /home/jovyan/.Renviron
 RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/jovyan/.Rprofile
-RUN mkdir /home/jovyan/.R/; echo "PKG_CXXFLAGS = '-std=c++11'" > ~/.R/Makevars
+RUN echo "PKG_CXXFLAGS = '-std=c++11'" > /home/jovyan/.R/Makevars
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
 RUN echo "install.packages(c('RCurl', 'devtools', 'dplyr'))" | R --no-save
 RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
