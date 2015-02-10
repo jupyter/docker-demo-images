@@ -67,6 +67,7 @@ ADD common/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
 ADD kernels/Julia/ /srv/Julia/
 ADD notebooks/ /home/jovyan/
 RUN git clone --depth 1 https://github.com/jupyter/strata-sv-2015-tutorial.git /home/jovyan/featured/strata-sv-2015-tutorial/
+RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/jovyan/featured/pandas-cookbook/
 
 # Add Google Analytics templates
 ADD common/ga/ /srv/ga/
