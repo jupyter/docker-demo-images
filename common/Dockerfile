@@ -15,7 +15,7 @@ RUN ipython profile create
 
 # Workaround for issue with ADD permissions
 USER root
-ADD common/profile_default /home/jovyan/.ipython/profile_default
+ADD profile_default /home/jovyan/.ipython/profile_default
 
 # Fake Google Analytics directory (for now)
 ADD ga/ /srv/ga/
