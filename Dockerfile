@@ -61,7 +61,7 @@ RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('ta
 
 # Workaround for issue with ADD permissions
 USER root
-ADD common/ipython_notebook_config.py /home/jovyan/.ipython/profile_default/
+ADD common/profile_default /home/jovyan/.ipython/profile_default
 
 # All the additions to give to the created user.
 ADD kernels/Julia/ /srv/Julia/
