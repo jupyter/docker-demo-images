@@ -91,4 +91,7 @@ RUN cp -r /srv/ipython/examples /home/jovyan/ipython_examples
 
 RUN chown -R jovyan:jovyan /home/jovyan
 
+# Convert notebooks to the current format
+RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
+
 CMD ipython3 notebook
