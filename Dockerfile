@@ -57,7 +57,22 @@ RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/j
 RUN echo "PKG_CXXFLAGS = '-std=c++11'" > /home/jovyan/.R/Makevars
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
 RUN echo "install.packages(c('RCurl', 'devtools', 'dplyr'))" | R --no-save
+RUN echo "install.packages(c('httr'))" | R --no-save
+RUN echo "install.packages(c('knitr'))" | R --no-save
+RUN echo "install.packages(c('packrat'))" | R --no-save
+RUN echo "install.packages(c('reshape2'))" | R --no-save
+RUN echo "install.packages(c('rmarkdown'))" | R --no-save
+RUN echo "install.packages(c('rvtest'))" | R --no-save
+RUN echo "install.packages(c('testthat'))" | R --no-save
+RUN echo "install.packages(c('tidyr'))" | R --no-save
+RUN echo "install.packages(c('shiny'))" | R --no-save
 RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
+RUN echo "library(devtools); install_github('hadley/lineprof')" | R --no-save
+RUN echo "library(devtools); install_github('rstudio/rticle')" | R --no-save
+RUN echo "library(devtools); install_github('jimhester/covr')" | R --no-save
+
+##
+RUN echo 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' | R --no-save
 
 # Workaround for issue with ADD permissions
 USER root
