@@ -57,7 +57,61 @@ RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/j
 RUN echo "PKG_CXXFLAGS = '-std=c++11'" > /home/jovyan/.R/Makevars
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
 RUN echo "install.packages(c('RCurl', 'devtools', 'dplyr'))" | R --no-save
+RUN echo "install.packages(c('httr'))" | R --no-save
+RUN echo "install.packages(c('knitr'))" | R --no-save
+RUN echo "install.packages(c('packrat'))" | R --no-save
+RUN echo "install.packages(c('reshape2'))" | R --no-save
+RUN echo "install.packages(c('rmarkdown'))" | R --no-save
+RUN echo "install.packages(c('rvtest'))" | R --no-save
+RUN echo "install.packages(c('testthat'))" | R --no-save
+RUN echo "install.packages(c('tidyr'))" | R --no-save
+RUN echo "install.packages(c('shiny'))" | R --no-save
 RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
+RUN echo "library(devtools); install_github('hadley/lineprof')" | R --no-save
+RUN echo "library(devtools); install_github('rstudio/rticle')" | R --no-save
+RUN echo "library(devtools); install_github('jimhester/covr')" | R --no-save
+
+##
+RUN echo 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' | R --no-save
+
+RUN echo "install.packages(c('base64enc'))" | R --no-save
+RUN echo "install.packages(c('Cairo'))" | R --no-save
+RUN echo "install.packages(c('codetools'))" | R --no-save
+RUN echo "install.packages(c('data.table'))" | R --no-save
+RUN echo "install.packages(c('downloader'))" | R --no-save
+RUN echo "install.packages(c('gridExtra'))" | R --no-save
+RUN echo "install.packages(c('gtable'))" | R --no-save
+RUN echo "install.packages(c('hexbin'))" | R --no-save
+RUN echo "install.packages(c('Hmisc'))" | R --no-save
+RUN echo "install.packages(c('jpeg'))" | R --no-save
+RUN echo "install.packages(c('Lahman'))" | R --no-save
+RUN echo "install.packages(c('lattice'))" | R --no-save
+RUN echo "install.packages(c('MASS'))" | R --no-save
+RUN echo "install.packages(c('PKI'))" | R --no-save
+RUN echo "install.packages(c('png'))" | R --no-save
+RUN echo "install.packages(c('microbenchmark'))" | R --no-save
+RUN echo "install.packages(c('mgcv'))" | R --no-save
+RUN echo "install.packages(c('mapproj'))" | R --no-save
+RUN echo "install.packages(c('maps'))" | R --no-save
+RUN echo "install.packages(c('maptools'))" | R --no-save
+RUN echo "install.packages(c('mgcv'))" | R --no-save
+RUN echo "install.packages(c('multcomp'))" | R --no-save
+RUN echo "install.packages(c('nlme'))" | R --no-save
+RUN echo "install.packages(c('nycflights13'))" | R --no-save
+RUN echo "install.packages(c('quantreg'))" | R --no-save
+RUN echo "install.packages(c('Rcpp'))" | R --no-save
+RUN echo "install.packages(c('RCurl'))" | R --no-save
+RUN echo "install.packages(c('rJava'))" | R --no-save
+RUN echo "install.packages(c('roxygen2'))" | R --no-save
+RUN echo "install.packages(c('RMySQL'))" | R --no-save
+RUN echo "install.packages(c('RPostgreSQL'))" | R --no-save
+RUN echo "install.packages(c('RSQLite'))" | R --no-save
+RUN echo "install.packages(c('testit'))" | R --no-save
+RUN echo "install.packages(c('XML'))" | R --no-save
+
+
+
+
 
 # Workaround for issue with ADD permissions
 USER root
@@ -93,5 +147,6 @@ RUN chown -R jovyan:jovyan /home/jovyan
 
 # Convert notebooks to the current format
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
+RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
 CMD ipython3 notebook
