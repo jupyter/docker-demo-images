@@ -16,18 +16,18 @@ RUN apt-get build-dep -y mpi4py && pip2 install scikit-image vincent dill networ
 # Install vim to make it available in the terminal
 RUN apt-get install -y vim
 
-# Install R, the R kernel, and R magics
-RUN apt-get install -y r-base r-base-dev r-cran-rcurl libreadline-dev
-RUN pip2 install rpy2 && pip3 install rpy2
-RUN pip2 install terminado && pip3 install terminado
-
-# Julia Installation
+# Julia and R Installation
 RUN apt-get install software-properties-common python-software-properties -y && \
+    add-apt-repository "deb http://cran.rstudio.com/bin/linux/ubuntu trusty/" && \
+    gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 && \
+    gpg -a --export E084DAB9 | apt-key add - && \
     add-apt-repository ppa:staticfloat/juliareleases && \
     add-apt-repository ppa:staticfloat/julia-deps && \
     apt-get update && \
     apt-get install julia -y && \
-    apt-get install libnettle4
+    apt-get install libnettle4 && \
+    apt-get install -y r-base r-base-dev r-cran-rcurl libreadline-dev && \
+    pip2 install rpy2 && pip3 install rpy2
 
 EXPOSE 8888
 
@@ -40,15 +40,12 @@ ENV HOME /home/jovyan
 ENV SHELL /bin/bash
 ENV USER jovyan
 
-RUN ipython profile create
-RUN mkdir /home/jovyan/communities
-RUN mkdir /home/jovyan/featured
+RUN ipython profile create && mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 
 # IJulia installation
 RUN julia -e 'Pkg.add("IJulia")'
 # Julia packages
-RUN julia -e 'Pkg.add("Gadfly")'
-RUN julia -e 'Pkg.add("RDatasets")'
+RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
 # R installation
 RUN mkdir /home/jovyan/.R/
@@ -57,61 +54,16 @@ RUN echo 'options(repos=structure(c(CRAN="http://cran.rstudio.com")))' > /home/j
 RUN echo "PKG_CXXFLAGS = '-std=c++11'" > /home/jovyan/.R/Makevars
 RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 'stringr', 'RColorBrewer', 'reshape', 'reshape2'))" | R --no-save
 RUN echo "install.packages(c('RCurl', 'devtools', 'dplyr'))" | R --no-save
-RUN echo "install.packages(c('httr'))" | R --no-save
-RUN echo "install.packages(c('knitr'))" | R --no-save
-RUN echo "install.packages(c('packrat'))" | R --no-save
-RUN echo "install.packages(c('reshape2'))" | R --no-save
-RUN echo "install.packages(c('rmarkdown'))" | R --no-save
-RUN echo "install.packages(c('rvtest'))" | R --no-save
-RUN echo "install.packages(c('testthat'))" | R --no-save
-RUN echo "install.packages(c('tidyr'))" | R --no-save
-RUN echo "install.packages(c('shiny'))" | R --no-save
+RUN echo "install.packages(c('httr', 'knitr', 'packrat'))" | R --no-save
+RUN echo "install.packages(c('rmarkdown', 'rvtest', 'testit', 'testthat', 'tidyr', 'shiny'))" | R --no-save
 RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
 RUN echo "library(devtools); install_github('hadley/lineprof')" | R --no-save
-RUN echo "library(devtools); install_github('rstudio/rticle')" | R --no-save
+RUN echo "library(devtools); install_github('rstudio/rticles')" | R --no-save
 RUN echo "library(devtools); install_github('jimhester/covr')" | R --no-save
 
-##
-RUN echo 'source("http://bioconductor.org/biocLite.R"); biocLite("BiocInstaller")' | R --no-save
-
-RUN echo "install.packages(c('base64enc'))" | R --no-save
-RUN echo "install.packages(c('Cairo'))" | R --no-save
-RUN echo "install.packages(c('codetools'))" | R --no-save
-RUN echo "install.packages(c('data.table'))" | R --no-save
-RUN echo "install.packages(c('downloader'))" | R --no-save
-RUN echo "install.packages(c('gridExtra'))" | R --no-save
-RUN echo "install.packages(c('gtable'))" | R --no-save
-RUN echo "install.packages(c('hexbin'))" | R --no-save
-RUN echo "install.packages(c('Hmisc'))" | R --no-save
-RUN echo "install.packages(c('jpeg'))" | R --no-save
-RUN echo "install.packages(c('Lahman'))" | R --no-save
-RUN echo "install.packages(c('lattice'))" | R --no-save
-RUN echo "install.packages(c('MASS'))" | R --no-save
-RUN echo "install.packages(c('PKI'))" | R --no-save
-RUN echo "install.packages(c('png'))" | R --no-save
-RUN echo "install.packages(c('microbenchmark'))" | R --no-save
-RUN echo "install.packages(c('mgcv'))" | R --no-save
-RUN echo "install.packages(c('mapproj'))" | R --no-save
-RUN echo "install.packages(c('maps'))" | R --no-save
-RUN echo "install.packages(c('maptools'))" | R --no-save
-RUN echo "install.packages(c('mgcv'))" | R --no-save
-RUN echo "install.packages(c('multcomp'))" | R --no-save
-RUN echo "install.packages(c('nlme'))" | R --no-save
-RUN echo "install.packages(c('nycflights13'))" | R --no-save
-RUN echo "install.packages(c('quantreg'))" | R --no-save
-RUN echo "install.packages(c('Rcpp'))" | R --no-save
-RUN echo "install.packages(c('RCurl'))" | R --no-save
-RUN echo "install.packages(c('rJava'))" | R --no-save
-RUN echo "install.packages(c('roxygen2'))" | R --no-save
-RUN echo "install.packages(c('RMySQL'))" | R --no-save
-RUN echo "install.packages(c('RPostgreSQL'))" | R --no-save
-RUN echo "install.packages(c('RSQLite'))" | R --no-save
-RUN echo "install.packages(c('testit'))" | R --no-save
-RUN echo "install.packages(c('XML'))" | R --no-save
-
-
-
-
+RUN echo "install.packages(c('base64enc', 'Cairo', 'codetools', 'data.table', 'gridExtra', 'gtable', 'hexbin', 'jpeg', 'Lahman', 'lattice'))" | R --no-save
+RUN echo "install.packages(c('MASS', 'PKI', 'png', 'microbenchmark', 'mgcv', 'mapproj', 'maps', 'maptools', 'mgcv', 'multcomp', 'nlme'))" | R --no-save
+RUN echo "install.packages(c('nycflights13', 'quantreg', 'rJava', 'roxygen2', 'RSQLite', 'XML'))" | R --no-save
 
 # Workaround for issue with ADD permissions
 USER root
