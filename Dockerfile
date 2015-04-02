@@ -56,7 +56,7 @@ RUN echo "install.packages(c('ggplot2', 'XML', 'plyr', 'randomForest', 'Hmisc', 
 RUN echo "install.packages(c('RCurl', 'devtools', 'dplyr'))" | R --no-save
 RUN echo "install.packages(c('httr', 'knitr', 'packrat'))" | R --no-save
 RUN echo "install.packages(c('rmarkdown', 'rvtest', 'testit', 'testthat', 'tidyr', 'shiny'))" | R --no-save
-RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('takluyver/IRdisplay'); install_github('takluyver/IRkernel'); IRkernel::installspec()" | R --no-save
+RUN echo "library(devtools); install_github('armstrtw/rzmq'); install_github('IRkernel/IRdisplay'); install_github('IRkernel/IRkernel'); IRkernel::installspec()" | R --no-save
 RUN echo "library(devtools); install_github('hadley/lineprof')" | R --no-save
 RUN echo "library(devtools); install_github('rstudio/rticles')" | R --no-save
 RUN echo "library(devtools); install_github('jimhester/covr')" | R --no-save
