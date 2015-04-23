@@ -1,14 +1,15 @@
-images: demo-image minimal-image
+images: minimal-image demo-image
 
-demo-image: Dockerfile
-	docker build -t jupyter/demo .
-
-minimal-image: common/Dockerfile
+minimal-image:
 	docker build -t jupyter/minimal common/
 
-cleanup:
+demo-image: minimal-image
+	docker build -t jupyter/demo .
+
+# Cleanup with fangs
+nuke:
 	-docker stop `docker ps -aq`
-	-docker rm   `docker ps -aq`
+	-docker rm -fv `docker ps -aq`
 	-docker images -q --filter "dangling=true" | xargs docker rmi
 
-.PHONY: cleanup
+.PHONY: nuke
