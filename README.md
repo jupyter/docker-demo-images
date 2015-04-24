@@ -1,6 +1,8 @@
 Docker Demo Images
 ==================
 
+[![Join the chat at https://gitter.im/jupyter/docker-demo-images](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jupyter/docker-demo-images?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Herein lies the Dockerfiles for both [`jupyter/demo`](https://registry.hub.docker.com/u/jupyter/demo/) (currently used by [tmpnb.org](https://tmpnb.org)) and [`jupyter/minimal`](https://registry.hub.docker.com/u/jupyter/minimal/).
 
 Creating sample notebooks does not require knowledge of Docker, just the IPython/Jupyter notebook. Submit PRs against the notebooks/ folder to get started.
