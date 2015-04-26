@@ -14,7 +14,7 @@ c.NotebookApp.port = 8888
 c.NotebookApp.trust_xheaders = True
 
 # Include our extra templates
-c.NotebookApp.extra_template_paths = ['/srv/ga/']
+c.NotebookApp.extra_template_paths = ['/srv/templates/']
 
 # Supply overrides for the tornado.web.Application that the IPython notebook
 # uses.

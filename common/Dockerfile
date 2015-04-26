@@ -41,8 +41,8 @@ RUN ipython profile create
 # Workaround for issue with ADD permissions
 USER root
 ADD profile_default /home/jovyan/.ipython/profile_default
-ADD ga/ /srv/ga/
-RUN chmod a+rX /srv/ga
+ADD templates/ /srv/templates/
+RUN chmod a+rX /srv/templates
 RUN chown jovyan:jovyan /home/jovyan -R
 USER jovyan
 
