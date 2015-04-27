@@ -1,5 +1,0 @@
-{"display_name":"Julia",
- "argv":["/usr/bin/julia","-i","-F","/home/jovyan/.julia/v0.3/IJulia/src/kernel.jl","{connection_file}"],
- "display_name":"Julia",
- "language":"julia",
- "codemirror_mode":"julia"}

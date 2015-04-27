@@ -1,26 +1,27 @@
-FROM ipython/ipython
+# Base image of the IPython/Jupyter notebook, with conda
+# Intended to be used in a tmpnb installation
 
-MAINTAINER IPython Project <ipython-dev@scipy.org>
+FROM debian:jessie
 
-RUN pip2 install terminado && pip3 install terminado
+MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
-# The ipython/ipython image has the full working copy of IPython
-RUN chmod a+rwX /srv/ipython/examples
+ENV DEBIAN_FRONTEND noninteractive
 
+RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 && apt-get clean
+
+ENV CONDA_DIR /opt/conda
+
+# Install conda for the jovyan user only (this is a single user container)
+RUN echo 'export PATH=$CONDA_DIR/bin:$PATH' > /etc/profile.d/conda.sh && \
+    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-3.9.1-Linux-x86_64.sh && \
+    /bin/bash /Miniconda3-3.9.1-Linux-x86_64.sh -b -p $CONDA_DIR && \
+    rm Miniconda3-3.9.1-Linux-x86_64.sh && \
+    $CONDA_DIR/bin/conda install --yes conda==3.10.1
+
+# We run our docker images with a non-root user as a security precaution.
 # jovyan is our user
 RUN useradd -m -s /bin/bash jovyan
-
-USER jovyan
-RUN ipython profile create
-
-# Workaround for issue with ADD permissions
-USER root
-ADD profile_default /home/jovyan/.ipython/profile_default
-
-# Fake Google Analytics directory (for now)
-ADD ga/ /srv/ga/
-RUN chmod a+rX /srv/ga
-RUN chown jovyan:jovyan /home/jovyan -R
+RUN chown -R jovyan:jovyan $CONDA_DIR
 
 EXPOSE 8888
 
@@ -28,7 +29,25 @@ USER jovyan
 ENV HOME /home/jovyan
 ENV SHELL /bin/bash
 ENV USER jovyan
+ENV PATH $CONDA_DIR/bin:$PATH
+WORKDIR $HOME
 
-WORKDIR /home/jovyan/
+USER jovyan
 
-CMD ipython3 notebook
+RUN conda install --yes ipython-notebook terminado
+
+RUN ipython profile create
+
+# Workaround for issue with ADD permissions
+USER root
+ADD profile_default /home/jovyan/.ipython/profile_default
+ADD templates/ /srv/templates/
+RUN chmod a+rX /srv/templates
+RUN chown jovyan:jovyan /home/jovyan -R
+USER jovyan
+
+# Convert notebooks to the current format
+RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
+RUN find . -name '*.ipynb' -exec ipython trust {} \;
+
+CMD ipython notebook
