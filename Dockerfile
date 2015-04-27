@@ -9,7 +9,7 @@ USER root
 # Julia dependencies
 RUN apt-get install -y julia libnettle4
 
-# R dependencies that conda can't give us
+# R dependencies that conda can't provide (X, fonts)
 RUN apt-get install -y libxrender1 fonts-dejavu
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
