@@ -11,7 +11,6 @@ Creating sample notebooks does not require knowledge of Docker, just the IPython
 
 The big demo image pulls in resources from
 
-* `kernels/` to install dependencies for R and Juila
 * `notebooks/` for example notebooks
 * `common/` for core components used by `minimal` and `demo`
 
@@ -29,7 +28,7 @@ The following tips will make sure your notebooks work well on
 [tmpnb.org](https://tmpnb.org) and work well for the users of your
 notebook.
 
-* Create your notebook using IPython 3.0 to ensure your notebook is `v4` format.
+* Create your notebook using IPython 3.x to ensure your notebook is `v4` format.
 * If adding a notebook that was a slideshow, make sure to set the "Cell Toolbar" setting back to `None`.
 * If you are creating your notebook on [tmpnb.org](https://tmpnb.org), make sure you're aware of the 10 minute idle time notebook reaper.  If you walk away from your notebook for too long, you can lose it!
 
@@ -55,3 +54,4 @@ docker build -t jupyter/demo .
 ```
 docker build -t jupyter/minimal common/
 ```
+
