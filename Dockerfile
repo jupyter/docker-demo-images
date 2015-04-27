@@ -33,7 +33,6 @@ RUN conda install --yes numpy pandas scikit-learn matplotlib scipy seaborn sympy
 # R packages
 RUN conda config --add channels r
 RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r-caret
-RUN echo "library(devtools); install_github('jimhester/robustr')" | R --no-save
 
 # IJulia and Julia packages
 RUN julia -e 'Pkg.add("IJulia")'
