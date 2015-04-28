@@ -46,6 +46,9 @@ RUN chmod a+rX /srv/templates
 RUN chown jovyan:jovyan /home/jovyan -R
 USER jovyan
 
+# Expose our custom setup to the installed ipython (for mounting by nginx)
+RUN cp /home/jovyan/.ipython/profile_default/static/custom/* /opt/conda/lib/python3.4/site-packages/IPython/html/static/custom/
+
 # Convert notebooks to the current format
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
 RUN find . -name '*.ipynb' -exec ipython trust {} \;
