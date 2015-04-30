@@ -38,6 +38,9 @@ RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r
 RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
+# Extra Kernels
+RUN pip install --user bash_kernel
+
 # Featured notebooks
 RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/jovyan/featured/pandas-cookbook/
 
