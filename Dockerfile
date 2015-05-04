@@ -7,10 +7,10 @@ MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 USER root
 
 # Julia dependencies
-RUN apt-get install -y julia libnettle4
+RUN apt-get install -y julia libnettle4 && apt-get clean
 
 # R dependencies that conda can't provide (X, fonts)
-RUN apt-get install -y libxrender1 fonts-dejavu
+RUN apt-get install -y libxrender1 fonts-dejavu && apt-get clean
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
@@ -28,11 +28,11 @@ WORKDIR $HOME
 USER jovyan
 
 # Python packages
-RUN conda install --yes numpy pandas scikit-learn matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle numba bokeh
+RUN conda install --yes numpy pandas scikit-learn matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle numba bokeh && conda clean -yt
 
 # R packages
 RUN conda config --add channels r
-RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r-caret
+RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r-caret && conda clean -yt
 
 # IJulia and Julia packages
 RUN julia -e 'Pkg.add("IJulia")'
