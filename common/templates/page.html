@@ -15,6 +15,6 @@
 
 {% block header_buttons %}
   <span id="login_widget">
-    <a class="pull-right" style="text-decoration: none; color:black;" href="https://developer.rackspace.com/"><span style="margin-left: 5px; margin-right: 5px;">on</span><img src="https://eafdbc63c97ce6bec9ef-b0a668e5876bef6fe25684caf71db405.ssl.cf1.rackcdn.com/v1-latest/logo-rackspace.png" height='28px'/></a>
+    <a class="pull-right" style="text-decoration: none; color:black;" href="https://developer.rackspace.com/"><span style="margin-left: 5px; margin-right: 5px;">{% if notebook_name %}on{% else %}hosted by{% endif %}</span><img src="http://ddf912383141a8d7bbe4-e053e711fc85de3290f121ef0f0e3a1f.r87.cf1.rackcdn.com/fanatiguy-logo.png" height='24px'/></a>
   </span>
 {% endblock %}
