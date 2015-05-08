@@ -10,7 +10,18 @@ USER root
 RUN apt-get install -y julia libnettle4 && apt-get clean
 
 # R dependencies that conda can't provide (X, fonts)
-RUN apt-get install -y libxrender1 fonts-dejavu && apt-get clean
+RUN apt-get install -y --no-install-recommends libxrender1 fonts-dejavu && apt-get clean
+
+# The Glorious Glasgow Haskell Compiler
+RUN apt-get install -y --no-install-recommends software-properties-common && apt-get clean
+RUN add-apt-repository -y ppa:hvr/ghc
+RUN sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list
+RUN apt-get update
+RUN apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && apt-get clean
+ENV PATH /opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
+
+# IHaskell dependencies
+RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev && apt-get clean
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
@@ -37,6 +48,16 @@ RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r
 # IJulia and Julia packages
 RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
+
+# IHaskell
+ENV PATH /home/jovyan/.cabal/bin:$PATH
+RUN cabal update && \
+    cabal install cpphs && \
+    cabal install gtk2hs-buildtools && \
+    cd && git clone --depth 1 https://github.com/gibiansky/IHaskell.git && \
+    cd IHaskell/ && \
+    ./build.sh ihaskell && \
+    cd && rm -fr ~/IHaskell $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 # Extra Kernels
 RUN pip install --user bash_kernel
