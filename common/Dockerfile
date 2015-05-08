@@ -34,7 +34,7 @@ WORKDIR $HOME
 
 USER jovyan
 
-RUN conda install --yes ipython-notebook terminado
+RUN conda install --yes ipython-notebook terminado && conda clean -yt
 
 RUN ipython profile create
 
