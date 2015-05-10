@@ -10,7 +10,7 @@ USER root
 RUN apt-get install -y julia libnettle4 && apt-get clean
 
 # R dependencies that conda can't provide (X, fonts)
-RUN apt-get install -y --no-install-recommends libxrender1 fonts-dejavu && apt-get clean
+RUN apt-get install -y libxrender1 fonts-dejavu && apt-get clean
 
 # The Glorious Glasgow Haskell Compiler
 RUN apt-get install -y --no-install-recommends software-properties-common && apt-get clean
