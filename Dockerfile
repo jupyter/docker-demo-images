@@ -54,10 +54,8 @@ ENV PATH /home/jovyan/.cabal/bin:$PATH
 RUN cabal update && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
-    cd && git clone --depth 1 https://github.com/gibiansky/IHaskell.git && \
-    cd IHaskell/ && \
-    ./build.sh ihaskell && \
-    cd && rm -fr ~/IHaskell $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
+    cabal install ihaskell-0.6.2.0 --reorder-goals && \
+    rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 # Extra Kernels
 RUN pip install --user bash_kernel
