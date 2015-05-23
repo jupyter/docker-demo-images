@@ -55,6 +55,7 @@ RUN cabal update && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
     cabal install ihaskell-0.6.2.0 --reorder-goals && \
+    ihaskell install && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 # Extra Kernels
