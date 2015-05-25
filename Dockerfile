@@ -23,6 +23,10 @@ ENV PATH /opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/
 # IHaskell dependencies
 RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev && apt-get clean
 
+# Ruby dependencies
+RUN apt-get install -y ruby ruby-dev libzmq3 libtool autoconf automake && apt-get clean && ln -s /usr/bin/libtoolize /usr/bin/libtool
+RUN gem install --no-rdoc --no-ri iruby pry pry-doc rubyvis
+
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
 RUN chown -R jovyan:jovyan /home/jovyan
@@ -40,6 +44,9 @@ USER jovyan
 
 # Python packages
 RUN conda install --yes numpy pandas scikit-learn matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle numba bokeh && conda clean -yt
+
+# IRuby
+RUN iruby register
 
 # R packages
 RUN conda config --add channels r
