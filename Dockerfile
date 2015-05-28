@@ -43,7 +43,7 @@ WORKDIR $HOME
 USER jovyan
 
 # Python packages
-RUN conda install --yes numpy pandas scikit-learn matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle numba bokeh && conda clean -yt
+RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle numba bokeh && conda clean -yt
 
 # IRuby
 RUN iruby register
