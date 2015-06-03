@@ -25,7 +25,7 @@ RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-d
 
 # Ruby dependencies
 RUN apt-get install -y ruby ruby-dev libzmq3 libtool autoconf automake && apt-get clean && ln -s /usr/bin/libtoolize /usr/bin/libtool
-RUN gem install --no-rdoc --no-ri iruby pry pry-doc rubyvis
+RUN gem install --no-rdoc --no-ri iruby pry pry-doc rubyvis nyaplot
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
@@ -43,7 +43,11 @@ WORKDIR $HOME
 USER jovyan
 
 # Python packages
-RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle numba bokeh && conda clean -yt
+RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt
+
+# Now for a python2 environment
+RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipython numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt
+RUN $CONDA_DIR/envs/python2/bin/python $CONDA_DIR/envs/python2/bin/ipython kernelspec install-self --user
 
 # IRuby
 RUN iruby register
