@@ -9,8 +9,8 @@ USER root
 # Julia dependencies
 RUN apt-get install -y julia libnettle4 && apt-get clean
 
-# R dependencies that conda can't provide (X, fonts)
-RUN apt-get install -y libxrender1 fonts-dejavu && apt-get clean
+# R dependencies that conda can't provide (X, fonts, compilers)
+RUN apt-get install -y libxrender1 fonts-dejavu gfortran gcc && apt-get clean
 
 # The Glorious Glasgow Haskell Compiler
 RUN apt-get install -y --no-install-recommends software-properties-common && apt-get clean
@@ -18,7 +18,7 @@ RUN add-apt-repository -y ppa:hvr/ghc
 RUN sed -i s/jessie/trusty/g /etc/apt/sources.list.d/hvr-ghc-jessie.list
 RUN apt-get update
 RUN apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && apt-get clean
-ENV PATH /opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
+ENV PATH /home/jovyan/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
 # IHaskell dependencies
 RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev && apt-get clean
@@ -37,7 +37,7 @@ USER jovyan
 ENV HOME /home/jovyan
 ENV SHELL /bin/bash
 ENV USER jovyan
-ENV PATH $CONDA_DIR/bin:$PATH
+ENV PATH $CONDA_DIR/bin:$CONDA_DIR/envs/python2/bin:$PATH
 WORKDIR $HOME
 
 USER jovyan
@@ -61,7 +61,6 @@ RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
 # IHaskell
-ENV PATH /home/jovyan/.cabal/bin:$PATH
 RUN cabal update && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
