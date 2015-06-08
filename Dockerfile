@@ -29,6 +29,7 @@ RUN gem install --no-rdoc --no-ri iruby pry pry-doc rubyvis nyaplot
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
+ADD datasets/ /home/jovyan/datasets/
 RUN chown -R jovyan:jovyan /home/jovyan
 
 EXPOSE 8888
