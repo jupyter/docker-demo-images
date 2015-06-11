@@ -6,6 +6,10 @@ minimal-image:
 demo-image: minimal-image
 	docker build -t jupyter/demo .
 
+upload: images
+	docker push jupyter/minimal
+	docker push jupyter/demo
+
 # Cleanup with fangs
 nuke:
 	-docker stop `docker ps -aq`
