@@ -24,8 +24,8 @@ ENV PATH /home/jovyan/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/hap
 RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev && apt-get clean
 
 # Ruby dependencies
-RUN apt-get install -y ruby ruby-dev libzmq3 libtool autoconf automake && apt-get clean && ln -s /usr/bin/libtoolize /usr/bin/libtool
-RUN gem install --no-rdoc --no-ri iruby pry pry-doc rubyvis nyaplot
+RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev && apt-get clean && ln -s /usr/bin/libtoolize /usr/bin/libtool
+RUN gem install --no-rdoc --no-ri sciruby-full
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
