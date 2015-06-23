@@ -10,6 +10,11 @@ upload: images
 	docker push jupyter/minimal
 	docker push jupyter/demo
 
+super-nuke: nuke
+	-docker rmi jupyter/minimal
+	-docker rmi jupyter/demo
+
+
 # Cleanup with fangs
 nuke:
 	-docker stop `docker ps -aq`
