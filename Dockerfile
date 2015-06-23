@@ -25,6 +25,7 @@ RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-d
 
 # Ruby dependencies
 RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev && apt-get clean && ln -s /usr/bin/libtoolize /usr/bin/libtool
+RUN apt-get install -y --no-install-recommends libmagick++-dev imagemagick
 RUN gem install --no-rdoc --no-ri sciruby-full
 
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
