@@ -28,6 +28,33 @@ RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf au
 RUN apt-get install -y --no-install-recommends libmagick++-dev imagemagick
 RUN gem install --no-rdoc --no-ri sciruby-full
 
+# Spark dependencies
+RUN apt-get install -y --no-install-recommends openjdk-7-jre-headless
+RUN wget -qO - http://d3kbcqa49mib13.cloudfront.net/spark-1.4.0-bin-hadoop2.6.tgz | tar -xz -C /usr/local/
+RUN cd /usr/local && ln -s spark-1.4.0-bin-hadoop2.6 spark
+
+# Scala Spark kernel (build and cleanup)
+RUN cd /tmp && \
+    echo deb http://dl.bintray.com/sbt/debian / > /etc/apt/sources.list.d/sbt.list && \
+    apt-get update && \
+    git clone https://github.com/ibm-et/spark-kernel.git && \
+    apt-get install -yq --force-yes --no-install-recommends sbt && \
+    cd spark-kernel && \
+    export APACHE_SPARK_VERSION=1.4.0 && \
+    sbt compile -Xms1024M \
+        -Xmx2048M \
+        -Xss1M \
+        -XX:+CMSClassUnloadingEnabled \
+        -XX:MaxPermSize=1024M && \
+    sbt pack && \
+    mv kernel/target/pack /opt/sparkkernel && \
+    chmod +x /opt/sparkkernel && \
+    rm -rf ~/.ivy2 && \
+    rm -rf ~/.sbt && \
+    rm -rf /tmp/spark-kernel && \
+    apt-get remove -y sbt && \
+    apt-get clean
+
 RUN mkdir /home/jovyan/communities && mkdir /home/jovyan/featured
 ADD notebooks/ /home/jovyan/
 ADD datasets/ /home/jovyan/datasets/
@@ -39,7 +66,9 @@ USER jovyan
 ENV HOME /home/jovyan
 ENV SHELL /bin/bash
 ENV USER jovyan
+ENV SPARK_HOME /usr/local/spark
 ENV PATH $CONDA_DIR/bin:$CONDA_DIR/envs/python2/bin:$PATH
+ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.8.2.1-src.zip
 WORKDIR $HOME
 
 USER jovyan
@@ -69,6 +98,10 @@ RUN cabal update && \
     cabal install ihaskell-0.6.2.0 --reorder-goals && \
     ihaskell install && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
+
+# Scala Spark kernel spec
+RUN mkdir -p $HOME/.ipython/kernels/scala
+COPY resources/kernel.json $HOME/.ipython/kernels/scala/
 
 # Extra Kernels
 RUN pip install --user bash_kernel
