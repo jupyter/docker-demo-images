@@ -29,9 +29,10 @@ RUN apt-get install -y --no-install-recommends libmagick++-dev imagemagick
 RUN gem install --no-rdoc --no-ri sciruby-full
 
 # Spark dependencies
+ENV APACHE_SPARK_VERSION 1.4.1
 RUN apt-get install -y --no-install-recommends openjdk-7-jre-headless
-RUN wget -qO - http://d3kbcqa49mib13.cloudfront.net/spark-1.4.0-bin-hadoop2.6.tgz | tar -xz -C /usr/local/
-RUN cd /usr/local && ln -s spark-1.4.0-bin-hadoop2.6 spark
+RUN wget -qO - http://d3kbcqa49mib13.cloudfront.net/spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6.tgz | tar -xz -C /usr/local/
+RUN cd /usr/local && ln -s spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6 spark
 
 # Scala Spark kernel (build and cleanup)
 RUN cd /tmp && \
@@ -40,7 +41,6 @@ RUN cd /tmp && \
     git clone https://github.com/ibm-et/spark-kernel.git && \
     apt-get install -yq --force-yes --no-install-recommends sbt && \
     cd spark-kernel && \
-    export APACHE_SPARK_VERSION=1.4.0 && \
     sbt compile -Xms1024M \
         -Xmx2048M \
         -Xss1M \
