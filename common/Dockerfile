@@ -7,7 +7,7 @@ MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 && apt-get clean
+RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 nodejs npm && apt-get clean
 
 ENV CONDA_DIR /opt/conda
 
@@ -43,7 +43,9 @@ USER root
 ADD profile_default /home/jovyan/.ipython/profile_default
 ADD templates/ /srv/templates/
 RUN chmod a+rX /srv/templates
-RUN chown jovyan:jovyan /home/jovyan -R
+# Hack to configure nodejs binary mapping
+RUN chown jovyan:jovyan /home/jovyan -R && \
+    ln -s /usr/bin/nodejs /usr/bin/node 
 USER jovyan
 
 # Expose our custom setup to the installed ipython (for mounting by nginx)
@@ -53,4 +55,25 @@ RUN cp /home/jovyan/.ipython/profile_default/static/custom/* /opt/conda/lib/pyth
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
 RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
-CMD ipython notebook
+# We need pip.conf for artifactory creds, but prefer not to put creds in git repo.
+# COPY pip.conf /home/jovyan/.config/pip/
+COPY dexy.yaml dexy_requirements.txt environment.yml /home/jovyan/notebooks/
+
+# Run the ipython notebook from a python2 environment that we control
+# Install publically available packages here, private once in run.sh after pip.conf is available
+
+RUN conda create -y --name python2 python2 \
+    source activate python2 \
+    pip install -r dexy_requirements.txt \
+    conda install -r environment.yml 
+    
+
+# Hack to configure nodejs binary mapping
+
+# Run the ipython notebook from a python2 environment that we control
+# Install publically available packages here, private once in run.sh after pip.conf is available
+RUN  conda create --name python2 python=2.7 
+
+RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
+    
+CMD ["/bin/bash","-c", "run.sh; ipython notebook"] 

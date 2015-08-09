@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/minimal
+FROM jupyter/demo-minimal
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -117,4 +117,13 @@ RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/jovyan/I
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
 RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
-CMD ipython notebook
+COPY dexy.yaml dexy_requirements.txt environment.yml /home/jovyan/notebooks/
+
+# Run the ipython notebook from a python2 environment that we control
+# Install publically available packages here, private once in run.sh after pip.conf is available
+RUN  conda create --name python2 python=2.7
+
+RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
+
+CMD ["/bin/bash","-c","run.sh && ipython notebook"]
+
