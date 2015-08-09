@@ -55,9 +55,13 @@ RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
 COPY pip.conf /home/jovyan/.config/pip/
 COPY dexy.yaml dexy_requirements.txt /home/jovyan/notebooks/
-RUN source activate python2 \
+# Run the ipython notebook from a python2 environment that we control
+RUN conda create --name python2 python2 \
+    source activate python2 \
     pip install -r dexy_requirements.txt \
     conda install -r environment.yml 
     
-    
+# Expose port used by Exercises/UI
+EXPOSE 5000    
+
 CMD ["bash", "run.sh; ipython notebook"] 
