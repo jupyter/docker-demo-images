@@ -53,9 +53,11 @@ RUN cp /home/jovyan/.ipython/profile_default/static/custom/* /opt/conda/lib/pyth
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
 RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
-COPY pip.conf /home/jovyan/.config/pip/
+# We need pip.conf for artifactory creds, but prefer not to put creds in git repo.
+# COPY pip.conf /home/jovyan/.config/pip/
 COPY dexy.yaml dexy_requirements.txt /home/jovyan/notebooks/
 # Run the ipython notebook from a python2 environment that we control
+# Install publically available packages here, private once in run.sh after pip.conf is available
 RUN conda create --name python2 python2 \
     source activate python2 \
     pip install -r dexy_requirements.txt \
