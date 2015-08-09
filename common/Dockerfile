@@ -53,4 +53,11 @@ RUN cp /home/jovyan/.ipython/profile_default/static/custom/* /opt/conda/lib/pyth
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
 RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
-CMD ipython notebook
+COPY pip.conf /home/jovyan/.config/pip/
+COPY dexy.yaml dexy_requirements.txt /home/jovyan/notebooks/
+RUN source activate python2 \
+    pip install -r dexy_requirements.txt \
+    conda install -r environment.yml 
+    
+    
+CMD ["bash", "run.sh; ipython notebook"] 
