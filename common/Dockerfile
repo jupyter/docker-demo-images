@@ -58,7 +58,8 @@ RUN find . -name '*.ipynb' -exec ipython trust {} \;
 COPY dexy.yaml dexy_requirements.txt /home/jovyan/notebooks/
 # Run the ipython notebook from a python2 environment that we control
 # Install publically available packages here, private once in run.sh after pip.conf is available
-RUN conda create --name python2 python2 \
+
+RUN conda create -y --name python2 python2 \
     source activate python2 \
     pip install -r dexy_requirements.txt \
     conda install -r environment.yml 
