@@ -55,15 +55,13 @@ RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
 # We need pip.conf for artifactory creds, but prefer not to put creds in git repo.
 # COPY pip.conf /home/jovyan/.config/pip/
-COPY dexy.yaml dexy_requirements.txt /home/jovyan/notebooks/
+COPY dexy.yaml dexy_requirements.txt environment.yml /home/jovyan/notebooks/
 # Run the ipython notebook from a python2 environment that we control
 # Install publically available packages here, private once in run.sh after pip.conf is available
-RUN conda create --name python2 python2 \
-    source activate python2 \
-    pip install -r dexy_requirements.txt \
-    conda install -r environment.yml 
-    
-# Expose port used by Exercises/UI
-EXPOSE 5000    
 
-CMD ["bash", "run.sh; ipython notebook"] 
+
+RUN conda create --name python2 python=2.7
+
+RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
+    
+CMD ["/bin/bash", "run.sh; ipython notebook"] 
