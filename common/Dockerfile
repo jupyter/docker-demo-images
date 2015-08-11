@@ -7,7 +7,10 @@ MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 && apt-get clean
+RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 nodejs npm && apt-get clean
+
+# Hack to configure nodejs binary mapping
+ln -s /usr/bin/nodejs /usr/bin/node
 
 ENV CONDA_DIR /opt/conda
 
