@@ -91,11 +91,12 @@ RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r
 RUN julia -e 'Pkg.add("IJulia")'
 RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
-# IHaskell
+# IHaskell + IHaskell-Widgets + Dependencies for examples
 RUN cabal update && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
-    cabal install ihaskell-0.6.2.0 --reorder-goals && \
+    cabal install ihaskell-0.6.4.1 --reorder-goals && \
+    cabal install ihaskell-widgets-0.1 HTTP Chart Chart-cairo && \
     ihaskell install && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
@@ -108,6 +109,9 @@ RUN pip install --user bash_kernel
 
 # Featured notebooks
 RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/jovyan/featured/pandas-cookbook/
+RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/jovyan/IHaskell/ && \
+    mv /home/jovyan/IHaskell/ihaskell-display/ihaskell-widgets/Examples /home/jovyan/featured/ihaskell-widgets && \
+    rm -r /home/jovyan/IHaskell
 
 # Convert notebooks to the current format
 RUN find . -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \;
