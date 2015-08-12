@@ -9,9 +9,6 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 nodejs npm && apt-get clean
 
-# Hack to configure nodejs binary mapping
-RUN ln -s /usr/bin/nodejs /usr/bin/node
-
 ENV CONDA_DIR /opt/conda
 
 # Install conda for the jovyan user only (this is a single user container)
@@ -46,7 +43,10 @@ USER root
 ADD profile_default /home/jovyan/.ipython/profile_default
 ADD templates/ /srv/templates/
 RUN chmod a+rX /srv/templates
-RUN chown jovyan:jovyan /home/jovyan -R
+# Hack to configure nodejs binary mapping
+RUN chown jovyan:jovyan /home/jovyan -R && \
+    ln -s /usr/bin/nodejs /usr/bin/node 
+
 USER jovyan
 
 # Expose our custom setup to the installed ipython (for mounting by nginx)
@@ -62,8 +62,8 @@ COPY dexy.yaml dexy_requirements.txt environment.yml /home/jovyan/notebooks/
 
 # Run the ipython notebook from a python2 environment that we control
 # Install publically available packages here, private once in run.sh after pip.conf is available
-RUN conda create --name python2 python=2.7
+RUN  conda create --name python2 python=2.7 
 
 RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
     
-CMD ipython notebook 
+CMD ipython notebook
