@@ -10,7 +10,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 nodejs npm && apt-get clean
 
 # Hack to configure nodejs binary mapping
-ln -s /usr/bin/nodejs /usr/bin/node
+RUN ln -s /usr/bin/nodejs /usr/bin/node
 
 ENV CONDA_DIR /opt/conda
 
@@ -66,4 +66,4 @@ RUN conda create --name python2 python=2.7
 
 RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
     
-CMD ["/bin/bash", "run.sh; ipython notebook"] 
+CMD ipython notebook 
