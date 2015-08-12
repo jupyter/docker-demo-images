@@ -43,7 +43,10 @@ USER root
 ADD profile_default /home/jovyan/.ipython/profile_default
 ADD templates/ /srv/templates/
 RUN chmod a+rX /srv/templates
-RUN chown jovyan:jovyan /home/jovyan -R
+# Hack to configure nodejs binary mapping
+RUN chown jovyan:jovyan /home/jovyan -R && \
+    ln -s /usr/bin/nodejs /usr/bin/node 
+
 USER jovyan
 
 # Expose our custom setup to the installed ipython (for mounting by nginx)
@@ -57,11 +60,9 @@ RUN find . -name '*.ipynb' -exec ipython trust {} \;
 # COPY pip.conf /home/jovyan/.config/pip/
 COPY dexy.yaml dexy_requirements.txt environment.yml /home/jovyan/notebooks/
 
-# Hack to configure nodejs binary mapping
 # Run the ipython notebook from a python2 environment that we control
 # Install publically available packages here, private once in run.sh after pip.conf is available
-RUN  ln -s /usr/bin/nodejs /usr/bin/node && \
-     conda create --name python2 python=2.7 
+RUN  conda create --name python2 python=2.7 
 
 RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
     
