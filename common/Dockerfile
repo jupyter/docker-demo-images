@@ -46,7 +46,6 @@ RUN chmod a+rX /srv/templates
 # Hack to configure nodejs binary mapping
 RUN chown jovyan:jovyan /home/jovyan -R && \
     ln -s /usr/bin/nodejs /usr/bin/node 
-
 USER jovyan
 
 # Expose our custom setup to the installed ipython (for mounting by nginx)
