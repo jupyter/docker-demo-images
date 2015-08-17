@@ -65,4 +65,4 @@ RUN  conda create --name python2 python=2.7
 
 RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
     
-CMD ipython notebook
+CMD ["/bin/bash","-c","run.sh && ipython notebook"]
