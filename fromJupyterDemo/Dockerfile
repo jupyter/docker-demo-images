@@ -5,7 +5,7 @@ FROM jupyter/demo
 MAINTAINER CognitiveScale <devops@cognitivescale.com>
 
 USER root
-RUN apt-get install nodejs npm && ln -s /usr/bin/nodejs /usr/bin/node
+RUN apt-get install -y nodejs npm && ln -s /usr/bin/nodejs /usr/bin/node
 
 USER jovyan
 
