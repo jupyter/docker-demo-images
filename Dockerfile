@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/demo-minimal
+FROM jupyter/minimal
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -125,5 +125,5 @@ RUN  conda create --name python2 python=2.7
 
 RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
 
-CMD ["/bin/bash","-c","run.sh && ipython notebook"]
+CMD ["/bin/bash","-c","/home/jovyan/run.sh && ipython notebook"]
 
