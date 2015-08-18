@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/minimal
+FROM jupyter/demo-minimal
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 

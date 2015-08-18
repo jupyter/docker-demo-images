@@ -70,10 +70,4 @@ RUN conda create -y --name python2 python2 \
 
 # Hack to configure nodejs binary mapping
 
-# Run the ipython notebook from a python2 environment that we control
-# Install publically available packages here, private once in run.sh after pip.conf is available
-RUN  conda create --name python2 python=2.7 
-
-RUN /bin/bash -c "source activate python2 && pip install -r notebooks/dexy_requirements.txt"
-    
-CMD ["/bin/bash","-c", "run.sh; ipython notebook"] 
+CMD ["/bin/bash","-c","/home/jovyan/notebooks/CogU/run.sh && ipython notebook"]
