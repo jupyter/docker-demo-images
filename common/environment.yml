@@ -1,4 +1,0 @@
-name: python2
-dependencies:
-- pip:
-  - cogscale-python-sdk
