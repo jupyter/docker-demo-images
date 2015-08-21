@@ -12,8 +12,9 @@ RUN mkdir $JUPYTER_SCRIPTS
 ADD dexy.yaml dexy_requirements.txt run.sh j2cli.sh setup_git_filters.sh $JUPYTER_SCRIPTS/ 
 ADD page.html /srv/templates/page.html
 
-RUN wget -o $JUPYTER_SCRIPTS/ipynb_git_output_filter.py https://s3.amazonaws.com/c12e-cognitivecloud/notebook/ipynb_git_output_filter.py && \
-    wget -o JUPYTER_SCRIPTS/strip_output_notebook.py https://s3.amazonaws.com/c12e-cognitivecloud/notebook/strip_output_notebook.py && \
+RUN cd $JUPYTER_SCRIPTS && \
+    wget https://s3.amazonaws.com/c12e-cognitivecloud/notebook/ipynb_git_output_filter.py && \
+    wget https://s3.amazonaws.com/c12e-cognitivecloud/notebook/strip_output_notebook.py && \
     chown -R jovyan:jovyan $JUPYTER_SCRIPTS && \
     chown -R jovyan:jovyan /home/jovyan && \
     apt-get -y install nodejs npm && \
