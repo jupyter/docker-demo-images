@@ -11,6 +11,7 @@ ENV COGU_HOME=/home/jovyan/notebooks/CogU \
 USER root
 RUN mkdir $JUPYTER_SCRIPTS 
 ADD dexy.yaml dexy_requirements.txt run.sh j2cli.sh setup_git_filters.sh $JUPYTER_SCRIPTS/ 
+ADD page.html /srv/templates/page.html
 
 RUN chown -R jovyan:jovyan $JUPYTER_SCRIPTS && \
     chown -R jovyan:jovyan /home/jovyan && \
