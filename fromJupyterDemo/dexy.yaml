@@ -1,0 +1,2 @@
+Exercises/Sourcing/config/config-template.json|jinja:
+  - output-name: config.json
