@@ -17,6 +17,8 @@ if [[ -e strip_output_notebook.py ]];then
     rm strip_output_notebook.py
 wget https://s3.amazonaws.com/c12e-cognitivecloud/notebook/strip_output_notebook.py
 git config filter.stripoutput.clean "$(git rev-parse --show-toplevel)/strip_notebook_output.py"
+git config filter.stripoutput.clean "$(git rev-parse --show-toplevel)/strip_output_notebook.py"
+
 git config filter.stripoutput.smudge cat
 git config filter.stripoutput.required true
 
