@@ -7,16 +7,21 @@ MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 nodejs npm && apt-get clean
+RUN  apt-get update && apt-get install -y git vim wget build-essential python-dev ca-certificates bzip2 libsm6 nodejs npm && apt-get clean
 
-ENV CONDA_DIR /opt/conda
+USER root
+
+ENV CONDA_DIR=/opt/conda \
+    COGU_HOME=/home/jovyan/notebooks/CogU
 
 # Install conda for the jovyan user only (this is a single user container)
+
 RUN echo 'export PATH=$CONDA_DIR/bin:$PATH' > /etc/profile.d/conda.sh && \
     wget --quiet https://repo.continuum.io/miniconda/Miniconda3-3.9.1-Linux-x86_64.sh && \
     /bin/bash /Miniconda3-3.9.1-Linux-x86_64.sh -b -p $CONDA_DIR && \
-    rm Miniconda3-3.9.1-Linux-x86_64.sh && \
-    $CONDA_DIR/bin/conda install --yes conda==3.10.1
+    rm Miniconda3-3.9.1-Linux-x86_64.sh 
+RUN ls -al $CONDA_DIR 
+RUN $CONDA_DIR/bin/conda install --yes conda
 
 # We run our docker images with a non-root user as a security precaution.
 # jovyan is our user
@@ -57,17 +62,25 @@ RUN find . -name '*.ipynb' -exec ipython trust {} \;
 
 # We need pip.conf for artifactory creds, but prefer not to put creds in git repo.
 # COPY pip.conf /home/jovyan/.config/pip/
-COPY dexy.yaml dexy_requirements.txt environment.yml /home/jovyan/notebooks/
+# COPY dexy.yaml dexy_requirements.txt  /home/jovyan/notebooks/
 
 # Run the ipython notebook from a python2 environment that we control
 # Install publically available packages here, private once in run.sh after pip.conf is available
 
-RUN conda create -y --name python2 python2 \
-    source activate python2 \
-    pip install -r dexy_requirements.txt \
-    conda install -r environment.yml 
-    
+# Python packages
+RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill bokeh && conda clean -yt
 
-# Hack to configure nodejs binary mapping
+# Now for a python2 environment
+RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipython numpy pandas \ 
+                    scikit-learn scikit-image matplotlib scipy seaborn sympy \
+                    cython patsy statsmodels cloudpickle dill numba bokeh && \ 
+    conda clean -yt 
 
-CMD ["/bin/bash","-c","/home/jovyan/notebooks/CogU/run.sh && ipython notebook"]
+RUN $CONDA_DIR/envs/python2/bin/python  $CONDA_DIR/envs/python2/bin/ipython kernelspec install-self --user 
+RUN pip install bash_kernel && \
+    python -m bash_kernel.install
+
+# Featured notebooks
+RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/jovyan/featured/pandas-cookbook/
+
+CMD ["/bin/bash","-c","/jupyter_scripts/run.sh $COGU_HOME && ipython notebook"]
