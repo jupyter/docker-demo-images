@@ -6,6 +6,8 @@ MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
 USER root
 
+RUN apt-get update
+
 # Julia dependencies
 RUN apt-get install -y julia libnettle4 && apt-get clean
 
