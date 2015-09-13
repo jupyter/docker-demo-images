@@ -7,7 +7,7 @@ MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 USER root
 
 # Julia dependencies
-RUN apt-get install -y julia libnettle4 && apt-get clean
+RUN apt-get update && apt-get install -y julia libnettle4 && apt-get clean
 
 # R dependencies that conda can't provide (X, fonts, compilers)
 RUN apt-get install -y libxrender1 fonts-dejavu gfortran gcc && apt-get clean
