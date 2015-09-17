@@ -96,7 +96,7 @@ RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 RUN cabal update && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
-    cabal install ihaskell-0.7.1.0 --reorder-goals && \
+    cabal install ihaskell-0.8.0.0 --reorder-goals && \
     cabal install ihaskell-widgets HTTP Chart Chart-cairo && \
     ihaskell install && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
