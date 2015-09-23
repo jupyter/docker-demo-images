@@ -148,5 +148,5 @@ RUN chmod a+rX /srv/templates
 
 # Append tmpnb specific options to the base config
 COPY resources/jupyter_notebook_config.partial.py /tmp/
-RUN cat tmp/jupyter_notebook_config.partial.py >> /home/jovyan/.jupyter/jupyter_notebook_config.py && \
+RUN cat /tmp/jupyter_notebook_config.partial.py >> /home/jovyan/.jupyter/jupyter_notebook_config.py && \
     rm /tmp/jupyter_notebook_config.partial.py
