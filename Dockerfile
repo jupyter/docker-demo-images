@@ -94,10 +94,11 @@ RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 RUN cabal update && \
+    curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
     cabal install ihaskell-0.8.0.0 --reorder-goals && \
-    cabal install singletons-1.1.2.1 ihaskell-widgets-0.2.0.0 HTTP Chart Chart-cairo && \
+    cabal install ihaskell-widgets-0.2.0.0 HTTP Chart Chart-cairo && \
     ihaskell install && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
