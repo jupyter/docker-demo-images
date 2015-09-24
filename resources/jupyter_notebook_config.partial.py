@@ -13,5 +13,5 @@ c.NotebookApp.tornado_settings = {
     'headers': {
         'Content-Security-Policy': "frame-ancestors 'self' https://*.jupyter.org https://jupyter.github.io https://*.tmpnb.org"
     },
-    'static_url_prefix': 'https://cdn.jupyter.org/notebook/try/'
+    'static_url_prefix': 'https://cdn.jupyter.org/notebook/try-4.0.5/'
 }
