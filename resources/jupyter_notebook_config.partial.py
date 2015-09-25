@@ -1,12 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
-# Configuration file for ipython-notebook.
-
-c = get_config()
-c.NotebookApp.ip = '*'
-c.NotebookApp.open_browser = False
-c.NotebookApp.port = 8888
 
 # Whether to trust or not X-Scheme/X-Forwarded-Proto and X-Real-Ip/X-Forwarded-
 # For headerssent by the upstream reverse proxy. Necessary if the proxy handles
@@ -22,5 +13,5 @@ c.NotebookApp.tornado_settings = {
     'headers': {
         'Content-Security-Policy': "frame-ancestors 'self' https://*.jupyter.org https://jupyter.github.io https://*.tmpnb.org"
     },
-    'static_url_prefix': 'https://cdn.jupyter.org/notebook/try/'
+    'static_url_prefix': 'https://cdn.jupyter.org/notebook/try-4.0.5/'
 }
