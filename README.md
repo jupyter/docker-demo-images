@@ -7,7 +7,7 @@ Herein lies the Dockerfile for [`jupyter/demo`](https://registry.hub.docker.com/
 
 Creating sample notebooks does not require knowledge of Docker, just the IPython/Jupyter notebook. Submit PRs against the `notebooks/` folder to get started.
 
-### Organization
+## Organization
 
 The big demo image pulls in resources from:
 
@@ -15,7 +15,7 @@ The big demo image pulls in resources from:
 * `datasets/` for example datasets
 * `resources/` for configuration and branding
 
-### Community Notebooks
+## Community Notebooks
 
 [tmpnb.org](https://tmpnb.org) is a great resource for communities
 looking for a place to host their public IPython/Jupyter notebooks.  If
@@ -33,7 +33,7 @@ notebook.
 * If adding a notebook that was a slideshow, make sure to set the "Cell Toolbar" setting back to `None`.
 * If you are creating your notebook on [tmpnb.org](https://tmpnb.org), make sure you're aware of the 10 minute idle time notebook reaper.  If you walk away from your notebook for too long, you can lose it!
 
-### Building the Docker Image
+## Building the Docker Image
 
 There is a Makefile to make life a bit easier here:
 
@@ -43,3 +43,26 @@ make build
 # try it locally
 make dev
 ```
+
+## FAQ
+
+### Can I use the `jupyter/demo` Docker image locally?
+
+Sure. Get a docker setup on your host and then do something like the following.
+
+```
+docker pull jupyter/demo
+docker run -p 8888:8888 jupyter/demo
+```
+
+### Is there a smaller image with fewer languages I can use?
+
+Indeed. See the [docker-stacks](https://github.com/jupyter/docker-stacks) repository for selection of smaller, more focused Docker images.
+
+### When do you update try.jupyter.org / tmpnb.org with new images?
+
+Updates are currently applied ad-hoc, when there's significant demand or new features.
+
+### How do I deploy my own temporary notebook site?
+
+Have a look at [jupyter/tmpnb](https://github.com/jupyter/tmpnb) for the tech that powers the tmpnb.org site and [tmpnb-deploy](https://github.com/jupyter/tmpnb-deploy) for an Ansible playbook used to deploy the site.
