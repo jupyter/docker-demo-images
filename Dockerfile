@@ -51,6 +51,7 @@ RUN cd /tmp && \
     git clone https://github.com/ibm-et/spark-kernel.git && \
     apt-get install -yq --force-yes --no-install-recommends sbt && \
     cd spark-kernel && \
+    git checkout 9db161f8667a3f148cd5d811be044db137db13c9 && \
     sbt compile -Xms1024M \
         -Xmx2048M \
         -Xss1M \
