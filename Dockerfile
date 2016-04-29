@@ -80,7 +80,7 @@ RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy 
 RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt
 RUN $CONDA_DIR/envs/python2/bin/python \
     $CONDA_DIR/envs/python2/bin/ipython \
-    kernelspec install-self --user
+    kernel install --user
 
 # IRuby
 # RUN iruby register
@@ -132,9 +132,9 @@ COPY resources/kernel.json /opt/conda/share/jupyter/kernels/scala/
 USER root
 
 # Convert notebooks to the current format and trust them
-RUN find /home/jovyan/work -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \; && \
+RUN find /home/jovyan/work -name '*.ipynb' -exec jupyter nbconvert --to notebook {} --output {} \; && \
     chown -R jovyan:users /home/jovyan && \
-    sudo -u jovyan env "PATH=$PATH" find /home/jovyan/work -name '*.ipynb' -exec ipython trust {} \;
+    sudo -u jovyan env "PATH=$PATH" find /home/jovyan/work -name '*.ipynb' -exec jupyter trust {} \;
 
 # Finally, add the site specific tmpnb.org / try.jupyter.org configuration.
 # These should probably be split off into a separate docker image so that others
