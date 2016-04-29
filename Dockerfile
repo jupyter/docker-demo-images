@@ -33,7 +33,7 @@ RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-d
 RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
     apt-get clean
-RUN gem install --no-rdoc --no-ri sciruby-full
+RUN gem install --no-rdoc --no-ri mixed_models:0.1.0 sciruby-full
 
 # Spark dependencies
 ENV APACHE_SPARK_VERSION 1.4.1
