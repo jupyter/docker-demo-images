@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/minimal-notebook:4.0
+FROM jupyter/minimal-notebook:2d878db5cbff
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -30,10 +30,10 @@ RUN apt-get update && \
 RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev && apt-get clean
 
 # Ruby dependencies
-RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
-    ln -s /usr/bin/libtoolize /usr/bin/libtool && \
-    apt-get clean
-RUN gem install --no-rdoc --no-ri sciruby-full
+# RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
+#     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
+#     apt-get clean
+# RUN gem install --no-rdoc --no-ri sciruby-full
 
 # Spark dependencies
 ENV APACHE_SPARK_VERSION 1.4.1
@@ -51,6 +51,7 @@ RUN cd /tmp && \
     git clone https://github.com/ibm-et/spark-kernel.git && \
     apt-get install -yq --force-yes --no-install-recommends sbt && \
     cd spark-kernel && \
+    git checkout 9db161f8667a3f148cd5d811be044db137db13c9 && \
     sbt compile -Xms1024M \
         -Xmx2048M \
         -Xss1M \
@@ -73,16 +74,16 @@ ENV SPARK_HOME /usr/local/spark
 ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.8.2.1-src.zip
 
 # Python packages
-RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh beautiful-soup && conda clean -yt
+RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh beautifulsoup4 && conda clean -yt
 
 # Now for a python2 environment
 RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt
 RUN $CONDA_DIR/envs/python2/bin/python \
     $CONDA_DIR/envs/python2/bin/ipython \
-    kernelspec install-self --user
+    kernel install --user
 
 # IRuby
-RUN iruby register
+# RUN iruby register
 
 # R packages
 RUN conda config --add channels r
@@ -131,9 +132,9 @@ COPY resources/kernel.json /opt/conda/share/jupyter/kernels/scala/
 USER root
 
 # Convert notebooks to the current format and trust them
-RUN find /home/jovyan/work -name '*.ipynb' -exec ipython nbconvert --to notebook {} --output {} \; && \
+RUN find /home/jovyan/work -name '*.ipynb' -exec jupyter nbconvert --to notebook {} --output {} \; && \
     chown -R jovyan:users /home/jovyan && \
-    sudo -u jovyan env "PATH=$PATH" find /home/jovyan/work -name '*.ipynb' -exec ipython trust {} \;
+    sudo -u jovyan env "PATH=$PATH" find /home/jovyan/work -name '*.ipynb' -exec jupyter trust {} \;
 
 # Finally, add the site specific tmpnb.org / try.jupyter.org configuration.
 # These should probably be split off into a separate docker image so that others
