@@ -30,10 +30,10 @@ RUN apt-get update && \
 RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-dev libcairo2-dev libpango1.0-dev && apt-get clean
 
 # Ruby dependencies
-RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
-    ln -s /usr/bin/libtoolize /usr/bin/libtool && \
-    apt-get clean
-RUN gem install --no-rdoc --no-ri mixed_models:0.1.0 sciruby-full
+# RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
+#     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
+#     apt-get clean
+# RUN gem install --no-rdoc --no-ri sciruby-full
 
 # Spark dependencies
 ENV APACHE_SPARK_VERSION 1.4.1
@@ -82,7 +82,7 @@ RUN $CONDA_DIR/envs/python2/bin/python \
     kernelspec install-self --user
 
 # IRuby
-RUN iruby register
+# RUN iruby register
 
 # R packages
 RUN conda config --add channels r
