@@ -34,7 +34,7 @@ RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf au
     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
     apt-get clean
 RUN gem update --system --no-document && \
-    gem install --no-document sciruby-full:0.2.10
+    gem install --no-document sciruby-full:0.2.10 rbczmq
 
 # Spark dependencies
 ENV APACHE_SPARK_VERSION 1.4.1
