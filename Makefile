@@ -1,7 +1,12 @@
 .PHONY: build dev nuke super-nuke upload
 
+TAG ?= a249876881d3
+
 help:
 	@cat Makefile
+
+update-tag:
+	./update-dockerfile-includes $(TAG)
 
 build:
 	docker build -t jupyter/demo .
