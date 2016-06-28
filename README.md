@@ -47,7 +47,7 @@ make dev
 ### Updating the Docker Image
 
 The demo image merges jupyter/datascience-notebook and jupyter/all-spark-notebook.
-It does so by inheriting FROM datascience-notebook and including the contents of its spark sibling Dockerfiles.
+It does so by inheriting FROM all-spark-notebook and including the contents of its datascience sibling Dockerfiles.
 To update the reference tag, edit the TAG variable in the Makefile and run:
 
     make update-tag
