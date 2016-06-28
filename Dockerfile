@@ -1,21 +1,73 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/minimal-notebook:2d878db5cbff
+FROM jupyter/all-spark-notebook:a249876881d3
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
-# Install system libraries first as root
+# BEGININCLUDE jupyter/datascience-notebook
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+# FROM jupyter/scipy-notebook
+
+# MAINTAINER Jupyter Project <jupyter@googlegroups.com>
+
 USER root
 
-# Julia dependencies
-RUN apt-get update &&  \
-    apt-get install -y julia libnettle4 && \
-    apt-get clean
-
-# R dependencies that conda can't provide (X, fonts, compilers)
+# R pre-requisites
 RUN apt-get update && \
-    apt-get install -y libxrender1 fonts-dejavu gfortran gcc && \
-    apt-get clean
+    apt-get install -y --no-install-recommends \
+    fonts-dejavu \
+    gfortran \
+    gcc && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Julia dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    julia \
+    libnettle4 && apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+USER jovyan
+
+# R packages including IRKernel which gets installed globally.
+RUN conda config --add channels r && \
+    conda install --quiet --yes \
+    'rpy2=2.7*' \
+    'r-base=3.2*' \
+    'r-irkernel=0.5*' \
+    'r-plyr=1.8*' \
+    'r-devtools=1.9*' \
+    'r-dplyr=0.4*' \
+    'r-ggplot2=1.0*' \
+    'r-tidyr=0.3*' \
+    'r-shiny=0.12*' \
+    'r-rmarkdown=0.8*' \
+    'r-forecast=5.8*' \
+    'r-stringr=0.6*' \
+    'r-rsqlite=1.0*' \
+    'r-reshape2=1.4*' \
+    'r-nycflights13=0.1*' \
+    'r-caret=6.0*' \
+    'r-rcurl=1.95*' \
+    'r-randomforest=4.6*' && conda clean -tipsy
+
+# Install IJulia packages as jovyan and then move the kernelspec out
+# to the system share location. Avoids problems with runtime UID change not
+# taking effect properly on the .local folder in the jovyan home dir.
+RUN julia -e 'Pkg.add("IJulia")' && \
+    mv /home/$NB_USER/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
+    chmod -R go+rx $CONDA_DIR/share/jupyter
+
+# Show Julia where conda libraries are
+# Add essential packages
+RUN echo 'push!(Sys.DL_LOAD_PATH, "/opt/conda/lib")' > /home/$NB_USER/.juliarc.jl && \
+    julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")' && julia -F -e 'Pkg.add("HDF5")'
+# ENDINCLUDE jupyter/datascience-notebook
+
+
+# Install system libraries first as root
+USER root
 
 # The Glorious Glasgow Haskell Compiler
 RUN apt-get update && \
@@ -36,63 +88,13 @@ RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf au
 RUN gem update --system --no-document && \
     gem install --no-document sciruby-full
 
-# Spark dependencies
-ENV APACHE_SPARK_VERSION 1.4.1
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends openjdk-7-jre-headless && \
-    apt-get clean
-RUN wget -qO - http://d3kbcqa49mib13.cloudfront.net/spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6.tgz | tar -xz -C /usr/local/ && \
-    cd /usr/local && \
-    ln -s spark-${APACHE_SPARK_VERSION}-bin-hadoop2.6 spark
-
-# Scala Spark kernel (build and cleanup)
-RUN cd /tmp && \
-    echo deb http://dl.bintray.com/sbt/debian / > /etc/apt/sources.list.d/sbt.list && \
-    apt-get update && \
-    git clone https://github.com/ibm-et/spark-kernel.git && \
-    apt-get install -yq --force-yes --no-install-recommends sbt && \
-    cd spark-kernel && \
-    git checkout 9db161f8667a3f148cd5d811be044db137db13c9 && \
-    sbt compile -Xms1024M \
-        -Xmx2048M \
-        -Xss1M \
-        -XX:+CMSClassUnloadingEnabled \
-        -XX:MaxPermSize=1024M && \
-    sbt pack && \
-    mv kernel/target/pack /opt/sparkkernel && \
-    chmod +x /opt/sparkkernel && \
-    rm -rf ~/.ivy2 && \
-    rm -rf ~/.sbt && \
-    rm -rf /tmp/spark-kernel && \
-    apt-get remove -y sbt && \
-    apt-get clean
-
 # Now switch to jovyan for all conda and other package manager installs
 USER jovyan
 
 ENV PATH /home/jovyan/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
-ENV SPARK_HOME /usr/local/spark
-ENV PYTHONPATH $SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.8.2.1-src.zip
-
-# Python packages
-RUN conda install --yes numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh beautifulsoup4 && conda clean -yt
-
-# Now for a python2 environment
-RUN conda create -p $CONDA_DIR/envs/python2 python=2.7 ipykernel numpy pandas scikit-learn scikit-image matplotlib scipy seaborn sympy cython patsy statsmodels cloudpickle dill numba bokeh && conda clean -yt
-RUN $CONDA_DIR/envs/python2/bin/python \
-    $CONDA_DIR/envs/python2/bin/ipython \
-    kernel install --user
 
 # IRuby
 RUN iruby register
-
-# R packages
-RUN conda config --add channels r
-RUN conda install --yes r-irkernel r-plyr r-devtools r-rcurl r-dplyr r-ggplot2 r-caret rpy2 r-tidyr r-shiny r-rmarkdown r-forecast r-stringr r-rsqlite r-reshape2 r-nycflights13 r-randomforest && conda clean -yt
-
-# IJulia and Julia packages
-RUN julia -e 'Pkg.add("IJulia")'
-RUN julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")'
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 RUN cabal update && \
@@ -122,10 +124,6 @@ RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/jovyan/w
 # build
 COPY notebooks/ /home/jovyan/work/
 COPY datasets/ /home/jovyan/work/datasets/
-
-# Add Scala kernel spec
-RUN mkdir -p /opt/conda/share/jupyter/kernels/scala
-COPY resources/kernel.json /opt/conda/share/jupyter/kernels/scala/
 
 # Switch back to root for permission fixes, conversions, and trust. Make sure
 # trust is done as jovyan so that the signing secret winds up in the jovyan

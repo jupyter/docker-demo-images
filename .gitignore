@@ -1,0 +1,4 @@
+docker-stacks
+*~
+__pycache__
+.cache
