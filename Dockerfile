@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/all-spark-notebook:a249876881d3
+FROM jupyter/all-spark-notebook:e736784a1a8f
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -28,7 +28,7 @@ RUN apt-get update && \
     libnettle4 && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-USER jovyan
+USER $NB_USER
 
 # R packages including IRKernel which gets installed globally.
 RUN conda config --add channels r && \
@@ -61,7 +61,7 @@ RUN julia -e 'Pkg.add("IJulia")' && \
 
 # Show Julia where conda libraries are
 # Add essential packages
-RUN echo 'push!(Sys.DL_LOAD_PATH, "/opt/conda/lib")' > /home/$NB_USER/.juliarc.jl && \
+RUN echo "push!(Sys.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" > /home/$NB_USER/.juliarc.jl && \
     julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")' && julia -F -e 'Pkg.add("HDF5")'
 # ENDINCLUDE jupyter/datascience-notebook
 
@@ -85,13 +85,14 @@ RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-d
 RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
     apt-get clean
+# We need to pin activemodel to 4.2 while we have ruby < 2.2
 RUN gem update --system --no-document && \
-    gem install --no-document sciruby-full
+    gem install --no-document 'activemodel:~> 4.2' sciruby-full
 
-# Now switch to jovyan for all conda and other package manager installs
-USER jovyan
+# Now switch to $NB_USER for all conda and other package manager installs
+USER $NB_USER
 
-ENV PATH /home/jovyan/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
+ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
 
 # IRuby
 RUN iruby register
@@ -112,36 +113,36 @@ RUN pip install --user --no-cache-dir bash_kernel && \
 
 # Clone featured notebooks before adding local content to avoid recloning
 # everytime something changes locally
-RUN mkdir -p /home/jovyan/work/communities && \
-    mkdir -p /home/jovyan/work/featured
-RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/jovyan/work/featured/pandas-cookbook/
-RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/jovyan/work/IHaskell/ && \
-    mv /home/jovyan/work/IHaskell/ihaskell-display/ihaskell-widgets/Examples /home/jovyan/work/featured/ihaskell-widgets && \
-    rm -r /home/jovyan/work/IHaskell
+RUN mkdir -p /home/$NB_USER/work/communities && \
+    mkdir -p /home/$NB_USER/work/featured
+RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/$NB_USER/work/featured/pandas-cookbook/
+RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/$NB_USER/work/IHaskell/ && \
+    mv /home/$NB_USER/work/IHaskell/ihaskell-display/ihaskell-widgets/Examples /home/$NB_USER/work/featured/ihaskell-widgets && \
+    rm -r /home/$NB_USER/work/IHaskell
 
 # Add local content, starting with notebooks and datasets which are the largest
 # so that later, smaller file changes do not cause a complete recopy during 
 # build
-COPY notebooks/ /home/jovyan/work/
-COPY datasets/ /home/jovyan/work/datasets/
+COPY notebooks/ /home/$NB_USER/work/
+COPY datasets/ /home/$NB_USER/work/datasets/
 
 # Switch back to root for permission fixes, conversions, and trust. Make sure
-# trust is done as jovyan so that the signing secret winds up in the jovyan
+# trust is done as $NB_USER so that the signing secret winds up in the $NB_USER
 # profile, not root's
 USER root
 
 # Convert notebooks to the current format and trust them
-RUN find /home/jovyan/work -name '*.ipynb' -exec jupyter nbconvert --to notebook {} --output {} \; && \
-    chown -R jovyan:users /home/jovyan && \
-    sudo -u jovyan env "PATH=$PATH" find /home/jovyan/work -name '*.ipynb' -exec jupyter trust {} \;
+RUN find /home/$NB_USER/work -name '*.ipynb' -exec jupyter nbconvert --to notebook {} --output {} \; && \
+    chown -R $NB_USER:users /home/$NB_USER && \
+    sudo -u $NB_USER env "PATH=$PATH" find /home/$NB_USER/work -name '*.ipynb' -exec jupyter trust {} \;
 
 # Finally, add the site specific tmpnb.org / try.jupyter.org configuration.
 # These should probably be split off into a separate docker image so that others
 # can reuse the very expensive build of all the above with their own site 
 # customization.
 
-# Expose our custom setup to the installed ipython (for mounting by nginx)
-COPY resources/custom.js /opt/conda/lib/python3.4/site-packages/notebook/static/custom/
+# Install our custom.js
+COPY resources/custom.js /home/$NB_USER/.jupyter/custom/
 
 # Add the templates
 COPY resources/templates/ /srv/templates/
@@ -149,5 +150,5 @@ RUN chmod a+rX /srv/templates
 
 # Append tmpnb specific options to the base config
 COPY resources/jupyter_notebook_config.partial.py /tmp/
-RUN cat /tmp/jupyter_notebook_config.partial.py >> /home/jovyan/.jupyter/jupyter_notebook_config.py && \
+RUN cat /tmp/jupyter_notebook_config.partial.py >> /home/$NB_USER/.jupyter/jupyter_notebook_config.py && \
     rm /tmp/jupyter_notebook_config.partial.py
