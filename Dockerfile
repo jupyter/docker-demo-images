@@ -141,8 +141,8 @@ RUN find /home/jovyan/work -name '*.ipynb' -exec jupyter nbconvert --to notebook
 # can reuse the very expensive build of all the above with their own site 
 # customization.
 
-# Expose our custom setup to the installed ipython (for mounting by nginx)
-COPY resources/custom.js /opt/conda/lib/python3.4/site-packages/notebook/static/custom/
+# Install our custom.js
+COPY resources/custom.js /home/jovyan/.jupyter/custom/
 
 # Add the templates
 COPY resources/templates/ /srv/templates/
