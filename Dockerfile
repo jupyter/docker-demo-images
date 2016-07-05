@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/all-spark-notebook:a249876881d3
+FROM jupyter/all-spark-notebook:e736784a1a8f
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -28,7 +28,7 @@ RUN apt-get update && \
     libnettle4 && apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-USER jovyan
+USER $NB_USER
 
 # R packages including IRKernel which gets installed globally.
 RUN conda config --add channels r && \
@@ -61,7 +61,7 @@ RUN julia -e 'Pkg.add("IJulia")' && \
 
 # Show Julia where conda libraries are
 # Add essential packages
-RUN echo 'push!(Sys.DL_LOAD_PATH, "/opt/conda/lib")' > /home/$NB_USER/.juliarc.jl && \
+RUN echo "push!(Sys.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" > /home/$NB_USER/.juliarc.jl && \
     julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")' && julia -F -e 'Pkg.add("HDF5")'
 # ENDINCLUDE jupyter/datascience-notebook
 
