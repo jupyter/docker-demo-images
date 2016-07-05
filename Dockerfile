@@ -85,8 +85,9 @@ RUN apt-get install -y --no-install-recommends zlib1g-dev libzmq3-dev libtinfo-d
 RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf automake gnuplot-nox libsqlite3-dev libatlas-base-dev libgsl0-dev libmagick++-dev imagemagick && \
     ln -s /usr/bin/libtoolize /usr/bin/libtool && \
     apt-get clean
+# We need to pin activemodel to 4.2 while we have ruby < 2.2
 RUN gem update --system --no-document && \
-    gem install --no-document sciruby-full
+    gem install --no-document 'activemodel:~> 4.2' sciruby-full
 
 # Now switch to jovyan for all conda and other package manager installs
 USER jovyan
