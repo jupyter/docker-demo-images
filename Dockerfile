@@ -4,6 +4,12 @@ FROM jupyter/all-spark-notebook:e736784a1a8f
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
+USER root
+RUN apt-get update \
+ && apt-get -y dist-upgrade --no-install-recommends \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 # BEGININCLUDE jupyter/datascience-notebook
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
