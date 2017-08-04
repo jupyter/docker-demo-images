@@ -133,8 +133,8 @@ RUN cabal update && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 # Extra Kernels
-RUN pip install --user --no-cache-dir bash_kernel && \
-    python -m bash_kernel.install
+RUN pip install --no-cache-dir bash_kernel && \
+    python -m bash_kernel.install --sys-prefix
 
 # Clone featured notebooks before adding local content to avoid recloning
 # everytime something changes locally
