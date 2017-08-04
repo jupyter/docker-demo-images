@@ -1,6 +1,6 @@
 # Docker demo image, as used on try.jupyter.org and tmpnb.org
 
-FROM jupyter/all-spark-notebook:28515ed64e5e
+FROM jupyter/all-spark-notebook:b4dd11e16ae4
 
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
@@ -28,48 +28,64 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Julia dependencies
-RUN apt-get update && \
+# install Julia packages in /opt/julia instead of $HOME
+ENV JULIA_PKGDIR=/opt/julia
+
+RUN echo "deb http://ppa.launchpad.net/staticfloat/juliareleases/ubuntu trusty main" > /etc/apt/sources.list.d/julia.list && \
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 3D3D3ACC && \
+    apt-get update && \
     apt-get install -y --no-install-recommends \
     julia \
     libnettle4 && apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    # Show Julia where conda libraries are \
+    echo "push!(Libdl.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" >> /usr/etc/julia/juliarc.jl && \
+    # Create JULIA_PKGDIR \
+    mkdir $JULIA_PKGDIR && \
+    chown -R $NB_USER:users $JULIA_PKGDIR
 
 USER $NB_USER
 
 # R packages including IRKernel which gets installed globally.
-# Pin r-base to a specific build number for https://github.com/jupyter/docker-stacks/issues/210#issuecomment-246081809
-RUN conda config --add channels r && \
+RUN conda config --system --add channels r && \
     conda install --quiet --yes \
     'rpy2=2.8*' \
-    'r-base=3.3.1 1' \
-    'r-irkernel=0.6*' \
+    'r-base=3.3.2' \
+    'r-irkernel=0.7*' \
     'r-plyr=1.8*' \
-    'r-devtools=1.11*' \
-    'r-dplyr=0.4*' \
-    'r-ggplot2=2.1*' \
-    'r-tidyr=0.5*' \
-    'r-shiny=0.13*' \
-    'r-rmarkdown=0.9*' \
-    'r-forecast=7.1*' \
-    'r-stringr=1.0*' \
-    'r-rsqlite=1.0*' \
+    'r-devtools=1.12*' \
+    'r-tidyverse=1.0*' \
+    'r-shiny=0.14*' \
+    'r-rmarkdown=1.2*' \
+    'r-forecast=7.3*' \
+    'r-rsqlite=1.1*' \
     'r-reshape2=1.4*' \
     'r-nycflights13=0.2*' \
     'r-caret=6.0*' \
     'r-rcurl=1.95*' \
+    'r-crayon=1.3*' \
     'r-randomforest=4.6*' && conda clean -tipsy
 
-# Install IJulia packages as jovyan and then move the kernelspec out
+# Add Julia packages
+# Install IJulia as jovyan and then move the kernelspec out
 # to the system share location. Avoids problems with runtime UID change not
 # taking effect properly on the .local folder in the jovyan home dir.
-RUN julia -e 'Pkg.add("IJulia")' && \
-    mv /home/$NB_USER/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
-    chmod -R go+rx $CONDA_DIR/share/jupyter
+RUN julia -e 'Pkg.init()' && \
+    julia -e 'Pkg.update()' && \
+    julia -e 'Pkg.add("HDF5")' && \
+    julia -e 'Pkg.add("Gadfly")' && \
+    julia -e 'Pkg.add("RDatasets")' && \
+    julia -e 'Pkg.add("IJulia")' && \
+    # Precompile Julia packages \
+    julia -e 'using HDF5' && \
+    julia -e 'using Gadfly' && \
+    julia -e 'using RDatasets' && \
+    julia -e 'using IJulia' && \
+    # move kernelspec out of home \
+    mv $HOME/.local/share/jupyter/kernels/julia* $CONDA_DIR/share/jupyter/kernels/ && \
+    chmod -R go+rx $CONDA_DIR/share/jupyter && \
+    rm -rf $HOME/.local
 
-# Show Julia where conda libraries are
-# Add essential packages
-RUN echo "push!(Sys.DL_LOAD_PATH, \"$CONDA_DIR/lib\")" > /home/$NB_USER/.juliarc.jl && \
-    julia -e 'Pkg.add("Gadfly")' && julia -e 'Pkg.add("RDatasets")' && julia -F -e 'Pkg.add("HDF5")'
 # ENDINCLUDE jupyter/datascience-notebook
 
 
