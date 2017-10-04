@@ -16,7 +16,9 @@ dev:
 	docker run --rm -it -p 8889:8888 jupyter/demo $(ARGS)
 
 upload:
+	docker tag jupyter/demo jupyter/demo:$(TAG)
 	docker push jupyter/demo
+	docker push jupyter/demo:$(TAG)
 
 super-nuke: nuke
 	-docker rmi jupyter/demo
