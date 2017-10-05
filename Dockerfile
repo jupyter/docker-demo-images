@@ -142,18 +142,18 @@ RUN pip install --no-cache-dir bash_kernel && \
 
 # Clone featured notebooks before adding local content to avoid recloning
 # everytime something changes locally
-RUN mkdir -p /home/$NB_USER/work/communities && \
-    mkdir -p /home/$NB_USER/work/featured
-RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/$NB_USER/work/featured/pandas-cookbook/
-RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/$NB_USER/work/IHaskell/ && \
-    mv /home/$NB_USER/work/IHaskell/ihaskell-display/ihaskell-widgets/Examples /home/$NB_USER/work/featured/ihaskell-widgets && \
-    rm -r /home/$NB_USER/work/IHaskell
+RUN mkdir -p /home/$NB_USER/communities && \
+    mkdir -p /home/$NB_USER/featured
+RUN git clone --depth 1 https://github.com/jvns/pandas-cookbook.git /home/$NB_USER/featured/pandas-cookbook/
+RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/$NB_USER/IHaskell/ && \
+    mv /home/$NB_USER/IHaskell/ihaskell-display/ihaskell-widgets/Examples /home/$NB_USER/featured/ihaskell-widgets && \
+    rm -r /home/$NB_USER/IHaskell
 
 # Add local content, starting with notebooks and datasets which are the largest
 # so that later, smaller file changes do not cause a complete recopy during 
 # build
-COPY notebooks/ /home/$NB_USER/work/
-COPY datasets/ /home/$NB_USER/work/datasets/
+COPY notebooks/ /home/$NB_USER/
+COPY datasets/ /home/$NB_USER/datasets/
 
 # Switch back to root for permission fixes, conversions, and trust. Make sure
 # trust is done as $NB_USER so that the signing secret winds up in the $NB_USER
@@ -161,9 +161,9 @@ COPY datasets/ /home/$NB_USER/work/datasets/
 USER root
 
 # Convert notebooks to the current format and trust them
-RUN find /home/$NB_USER/work -name '*.ipynb' -exec jupyter nbconvert --to notebook {} --output {} \; && \
+RUN find /home/$NB_USER -name '*.ipynb' -exec jupyter nbconvert --to notebook {} --output {} \; && \
     chown -R $NB_USER:users /home/$NB_USER && \
-    sudo -u $NB_USER env "PATH=$PATH" find /home/$NB_USER/work -name '*.ipynb' -exec jupyter trust {} \;
+    sudo -u $NB_USER env "PATH=$PATH" find /home/$NB_USER -name '*.ipynb' -exec jupyter trust {} \;
 
 # Finally, add the site specific tmpnb.org / try.jupyter.org configuration.
 # These should probably be split off into a separate docker image so that others
