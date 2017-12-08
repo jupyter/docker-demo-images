@@ -1,6 +1,6 @@
 .PHONY: build dev nuke super-nuke upload
 
-TAG ?= 7fd175ec22c7
+TAG ?= c7fb6660d096
 
 help:
 	@cat Makefile
