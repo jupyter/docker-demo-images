@@ -165,7 +165,7 @@ RUN git clone --depth 1 https://github.com/gibiansky/IHaskell.git /home/$NB_USER
     rm -r /home/$NB_USER/IHaskell
 
 # Add local content, starting with notebooks and datasets which are the largest
-# so that later, smaller file changes do not cause a complete recopy during 
+# so that later, smaller file changes do not cause a complete recopy during
 # build
 COPY notebooks/ /home/$NB_USER/
 COPY datasets/ /home/$NB_USER/datasets/
@@ -182,15 +182,17 @@ RUN find /home/$NB_USER -name '*.ipynb' -exec jupyter nbconvert --to notebook {}
 
 # Finally, add the site specific tmpnb.org / try.jupyter.org configuration.
 # These should probably be split off into a separate docker image so that others
-# can reuse the very expensive build of all the above with their own site 
+# can reuse the very expensive build of all the above with their own site
 # customization.
-
-# Install our custom.js
-COPY resources/custom.js /home/$NB_USER/.jupyter/custom/
 
 # Add the templates
 COPY resources/templates/ /srv/templates/
 RUN chmod a+rX /srv/templates
+
+USER $NB_USER
+
+# Install our custom.js
+COPY resources/custom.js /home/$NB_USER/.jupyter/custom/
 
 # Append tmpnb specific options to the base config
 COPY resources/jupyter_notebook_config.partial.py /tmp/
