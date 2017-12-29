@@ -118,6 +118,19 @@ RUN apt-get install -y --no-install-recommends ruby ruby-dev libtool autoconf au
 RUN gem update --system --no-document && \
     gem install --no-document 'activemodel:~> 4.2' sciruby-full
 
+# Perl 6
+RUN apt-get update \
+  && apt-get install -y build-essential \
+  && git clone https://github.com/rakudo/rakudo.git -b 2017.12 \
+  && cd rakudo && perl Configure.pl --prefix=/usr --gen-moar --gen-nqp --backends=moar \
+  && make && make install && cd .. && rm -rf rakudo \
+  && git clone https://github.com/ugexe/zef.git && cd zef && perl6 -Ilib bin/zef install . \
+  && export PATH=$PATH:/usr/share/perl6/site/bin \
+  && zef -v install Jupyter::Kernel SVG::Plot --force-test \
+  && jupyter-kernel.p6 --generate-config
+
+ENV PATH /usr/share/perl6/site/bin:$PATH
+
 # Now switch to $NB_USER for all conda and other package manager installs
 USER $NB_USER
 
