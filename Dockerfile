@@ -104,7 +104,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends software-properties-common && \
     add-apt-repository -y ppa:hvr/ghc && \
     apt-get update && \
-    apt-get install -y cabal-install-1.22 ghc-7.8.4 happy-1.19.4 alex-3.1.3 && \
+    apt-get install -y cabal-install-1.24 ghc-8.0.2 happy-1.19.5 alex-3.1.7 && \
     apt-get clean
 
 # IHaskell dependencies
@@ -134,21 +134,21 @@ ENV PATH /usr/share/perl6/site/bin:$PATH
 # Now switch to $NB_USER for all conda and other package manager installs
 USER $NB_USER
 
-ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.22/bin:/opt/ghc/7.8.4/bin:/opt/happy/1.19.4/bin:/opt/alex/3.1.3/bin:$PATH
+ENV PATH /home/$NB_USER/.cabal/bin:/opt/cabal/1.24/bin:/opt/ghc/8.0.2/bin:/opt/happy/1.19.5/bin:/opt/alex/3.1.7/bin:$PATH
 
 # IRuby
 RUN iruby register
 
 # IHaskell + IHaskell-Widgets + Dependencies for examples
 RUN cabal update && \
-    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-2.22/cabal.config?global=true' >> ~/.cabal/config && \
+    CURL_CA_BUNDLE='/etc/ssl/certs/ca-certificates.crt' curl 'https://www.stackage.org/lts-9.21/cabal.config?global=true' >> ~/.cabal/config && \
     cabal install cpphs && \
     cabal install gtk2hs-buildtools && \
-    cabal install ihaskell-0.8.4.0 --reorder-goals && \
+    cabal install ihaskell-0.9.0.2 --reorder-goals && \
     cabal install \
         # ihaskell-widgets-0.2.3.1 \ temporarily disabled because installation fails
         HTTP Chart Chart-cairo && \
-    ihaskell install && \
+    ihaskell install --prefix=$CONDA_DIR && \
     rm -fr $(echo ~/.cabal/bin/* | grep -iv ihaskell) ~/.cabal/packages ~/.cabal/share/doc ~/.cabal/setup-exe-cache ~/.cabal/logs
 
 # Extra Kernels
