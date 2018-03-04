@@ -1,5 +1,8 @@
-Docker Demo Image
-=================
+# Docker Demo Image
+
+**This repo is archived** and no longer used. If you would like to include a demo of your Jupyter kernel, please add a link to your own demo  [to the try jupyter page](https://jupyter.org/try) by adding a link, description, and logo [here](https://github.com/jupyter/jupyter.github.io/blob/master/_data/try.yml).
+
+# Original README
 
 [![Join the chat at https://gitter.im/jupyter/docker-demo-images](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jupyter/docker-demo-images?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
